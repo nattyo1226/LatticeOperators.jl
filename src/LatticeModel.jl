@@ -2,7 +2,7 @@ module LatticeModel
 
 include("operator/Operator.jl")
 using .Operator
-export AbstractOperator, PauliI, PauliX, PauliY, PauliZ
+export AbstractOperator, Identity, PauliX, PauliY, PauliZ
 
 include("term/Term.jl")
 using .Term
