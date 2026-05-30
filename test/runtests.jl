@@ -2,5 +2,6 @@ using LatticeModel
 using Test
 
 @testset "LatticeModel.jl" begin
-    # Write your tests here.
+    include("model/tfi.jl")
+    include("model/xyz.jl")
 end
