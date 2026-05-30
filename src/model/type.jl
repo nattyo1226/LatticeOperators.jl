@@ -1,3 +1,3 @@
-struct GenericModel
-    terms::Vector{AbstractTerm}
+struct GenericModel{T<:Number}
+    terms::Vector{AbstractTerm{T}}
 end
