@@ -1,18 +1,18 @@
-struct OnsiteOperator{O<:AbstractOperatorPrimitive} <: AbstractOperator
-    op::O
+struct OnsiteOperator{P<:AbstractOperatorPrimitive} <: AbstractOperator
+    pr::P
     id::Int
     coeff::Float64
 end
 
-function OnsiteOperator(op::O, id::Int) where {O<:AbstractOperatorPrimitive}
-    return OnsiteOperator{O}(op, id, 1.0)
+function OnsiteOperator(pr::P, id::Int) where {P<:AbstractOperatorPrimitive}
+    return OnsiteOperator{P}(pr, id, 1.0)
 end
 
-struct UniformOnsiteOperator{O<:AbstractOperatorPrimitive} <: AbstractOperator
-    op::O
+struct UniformOnsiteOperator{P<:AbstractOperatorPrimitive} <: AbstractOperator
+    pr::P
     coeff::Float64
 end
 
-function UniformOnsiteOperator(op::O) where {O<:AbstractOperatorPrimitive}
-    return UniformOnsiteOperator{O}(op, 1.0)
+function UniformOnsiteOperator(pr::P) where {P<:AbstractOperatorPrimitive}
+    return UniformOnsiteOperator{P}(pr, 1.0)
 end

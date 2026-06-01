@@ -1,85 +1,85 @@
-struct PairOperator{O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive} <: AbstractOperator
+struct PairOperator{P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive} <: AbstractOperator
     id1::Int
     id2::Int
-    op1::O1
-    op2::O2
+    pr1::P1
+    pr2::P2
     coeff::Float64
 end
 
 function PairOperator(
     id1::Int,
     id2::Int,
-    op::O,
+    pr::P,
     coeff::Float64,
-) where {O<:AbstractOperatorPrimitive}
-    return PairOperator{O,O}(id1, id2, op, op, coeff)
+) where {P<:AbstractOperatorPrimitive}
+    return PairOperator{P,P}(id1, id2, pr, pr, coeff)
 end
 
 function PairOperator(
     id1::Int,
     id2::Int,
-    op1::O1,
-    op2::O2,
-) where {O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive}
-    return PairOperator{O1,O2}(id1, id2, op1, op2, 1.0)
+    pr1::P1,
+    pr2::P2,
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return PairOperator{P1,P2}(id1, id2, pr1, pr2, 1.0)
 end
 
 function PairOperator(
     id1::Int,
     id2::Int,
-    op::O,
-) where {O<:AbstractOperatorPrimitive}
-    return PairOperator{O,O}(id1, id2, op, op, 1.0)
+    pr::P,
+) where {P<:AbstractOperatorPrimitive}
+    return PairOperator{P,P}(id1, id2, pr, pr, 1.0)
 end
 
-struct UniformPairOperator{O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive} <: AbstractOperator
-    op1::O1
-    op2::O2
+struct UniformPairOperator{P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive} <: AbstractOperator
+    pr1::P1
+    pr2::P2
     coeff::Float64
     shell::Int
 end
 
 function UniformPairOperator(
-    op::O,
+    pr::P,
     coeff::Float64,
     shell::Int,
-) where {O<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O,O}(op, op, coeff, shell)
+) where {P<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P,P}(pr, pr, coeff, shell)
 end
 
 function UniformPairOperator(
-    op1::O1,
-    op2::O2,
+    pr1::P1,
+    pr2::P2,
     shell::Int,
-) where {O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O1,O2}(op1, op2, 1.0, shell)
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P1,P2}(pr1, pr2, 1.0, shell)
 end
 
 function UniformPairOperator(
-    op1::O1,
-    op2::O2,
+    pr1::P1,
+    pr2::P2,
     coeff::Float64,
-) where {O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O1,O2}(op1, op2, coeff, 1)
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P1,P2}(pr1, pr2, coeff, 1)
 end
 
 function UniformPairOperator(
-    op1::O1,
-    op2::O2,
-) where {O1<:AbstractOperatorPrimitive,O2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O1,O2}(op1, op2, 1.0, 1)
+    pr1::P1,
+    pr2::P2,
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P1,P2}(pr1, pr2, 1.0, 1)
 end
 
 function UniformPairOperator(
-    op::O,
+    pr::P,
     shell::Int,
-) where {O<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O,O}(op, op, 1.0, shell)
+) where {P<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P,P}(pr, pr, 1.0, shell)
 end
 
 function UniformPairOperator(
-    op::O,
+    pr::P,
     coeff::Float64,
-) where {O<:AbstractOperatorPrimitive}
-    return UniformPairOperator{O,O}(op, op, coeff, 1)
+) where {P<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P,P}(pr, pr, coeff, 1)
 end
