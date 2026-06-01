@@ -1,5 +1,7 @@
 module Operator
 
+using Printf
+
 using ..LatticeOperator: AbstractOperatorPrimitive, AbstractOperator
 
 include("onsite.jl")
