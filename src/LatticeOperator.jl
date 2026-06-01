@@ -9,7 +9,7 @@ export Identity, PauliX, PauliY, PauliZ
 
 include("operator/Operator.jl")
 using .Operator
-export OnsiteOperator, UniformOnsiteOperator, PairOperator, UniformPairOperator
+export OnsiteOperator, UniformOnsiteOperator, PairOperator, UniformPairOperator, SummedOperator
 
 include("family/Family.jl")
 using .Family
