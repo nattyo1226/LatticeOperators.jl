@@ -1,11 +1,12 @@
 function test_xyz()
-    model = XYZModel(1.0, 0.5, 0.25)
-    @test length(model.terms) == 3
-    @test model.terms[1] == PairTerm(PauliX(), PauliX(), -1.0, 1)
-    @test model.terms[2] == PairTerm(PauliY(), PauliY(), -0.5, 1)
-    @test model.terms[3] == PairTerm(PauliZ(), PauliZ(), -0.25, 1)
+    model = XYZHamiltonian(jx=1.0, jy=0.5, jz=0.25)
+    ops = model.ops
+    @test length(ops) == 3
+    @test ops[1] == UniformPairOperator(PauliX(), 1.0, 1)
+    @test ops[2] == UniformPairOperator(PauliY(), 0.5, 1)
+    @test ops[3] == UniformPairOperator(PauliZ(), 0.25, 1)
 end
 
-@testset "XYZModel" begin
+@testset "XYZHamiltonian" begin
     test_xyz()
 end

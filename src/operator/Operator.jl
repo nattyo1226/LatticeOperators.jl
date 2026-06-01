@@ -1,12 +1,15 @@
 module Operator
 
-abstract type AbstractOperator end
+using ..LatticeOperator: AbstractOperatorPrimitive, AbstractOperator
 
-struct Identity <: AbstractOperator end
-struct PauliX <: AbstractOperator end
-struct PauliY <: AbstractOperator end
-struct PauliZ <: AbstractOperator end
+include("onsite.jl")
+export OnsiteOperator, UniformOnsiteOperator
 
-export AbstractOperator, Identity, PauliX, PauliY, PauliZ
+include("pair.jl")
+export PairOperator, UniformPairOperator
+
+include("summed.jl")
+export SummedOperator
+
 
 end

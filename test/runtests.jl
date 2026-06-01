@@ -1,7 +1,7 @@
-using LatticeModel
+using LatticeOperator
 using Test
 
-@testset "LatticeModel.jl" begin
+@testset "LatticeOperator.jl" begin
     include("model/tfi.jl")
     include("model/xyz.jl")
 end

@@ -1,10 +1,11 @@
 function test_tfi()
-    model = TFIModel(1.0, 0.5)
-    @test length(model.terms) == 2
-    @test model.terms[1] == PairTerm(PauliZ(), PauliZ(), -1.0, 1)
-    @test model.terms[2] == OnsiteTerm(PauliX(), -0.5)
+    model = TFIHamiltonian(j=1.0, h=0.5)
+    ops = model.ops
+    @test length(ops) == 2
+    @test ops[1] == UniformPairOperator(PauliZ(), 1.0, 1)
+    @test ops[2] == UniformOnsiteOperator(PauliX(), 0.5)
 end
 
-@testset "TFIModel" begin
+@testset "TFIHamiltonian" begin
     test_tfi()
 end
