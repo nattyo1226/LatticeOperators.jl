@@ -1,5 +1,8 @@
 module Family
 
+using Random
+using LatticeGeometry
+
 using ..Primitive: PauliX, PauliY, PauliZ
 using ..Operator: UniformOnsiteOperator, UniformPairOperator, SummedOperator
 

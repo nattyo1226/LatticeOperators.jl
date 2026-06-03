@@ -1,10 +1,15 @@
 function test_xyz()
-    model = XYZHamiltonian(jx=-1.0, jy=-0.5, jz=-0.25)
+    jx = -3.0
+    jy = -1.0
+    jz = +1.0
+
+
+    model = XYZHamiltonian(jx, jy, jz)
     ops = model.ops
     @test length(ops) == 3
-    @test ops[1] == UniformPairOperator(PauliX(), -1.0, 1)
-    @test ops[2] == UniformPairOperator(PauliY(), -0.5, 1)
-    @test ops[3] == UniformPairOperator(PauliZ(), -0.25, 1)
+    @test ops[1] == UniformPairOperator(PauliX(), jx, 1)
+    @test ops[2] == UniformPairOperator(PauliY(), jy, 1)
+    @test ops[3] == UniformPairOperator(PauliZ(), jz, 1)
 end
 
 @testset "XYZHamiltonian" begin
