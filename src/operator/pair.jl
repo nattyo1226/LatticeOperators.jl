@@ -4,6 +4,19 @@ struct PairOperator{P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
     pr1::P1
     pr2::P2
     coeff::Float64
+
+    function PairOperator(
+        id1::Int,
+        id2::Int,
+        pr1::P1,
+        pr2::P2,
+        coeff::Float64,
+    ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+        if id1 == id2
+            error("id1 and id2 must be different for a PairOperator.")
+        end
+        return PairOperator{P1,P2}(id1, id2, pr1, pr2, coeff)
+    end
 end
 
 function PairOperator(
