@@ -1,119 +1,139 @@
-struct PairOperator{P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive} <: AbstractOperator
+struct PairOperator{
+    P1<:AbstractOperatorPrimitive,
+    P2<:AbstractOperatorPrimitive,
+} <: AbstractOperator
     id1::Int
     id2::Int
-    pr1::P1
-    pr2::P2
     coeff::Float64
 
-    function PairOperator(
+    function PairOperator{P1,P2}(
         id1::Int,
         id2::Int,
-        pr1::P1,
-        pr2::P2,
         coeff::Float64,
     ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-        if id1 == id2
-            error("id1 and id2 must be different for a PairOperator.")
-        end
-        return PairOperator{P1,P2}(id1, id2, pr1, pr2, coeff)
+        id1 == id2 && error("id1 and id2 must differ.")
+        return new{P1,P2}(id1,id2,coeff)
     end
 end
 
 function PairOperator(
+    ::Type{P1},
+    ::Type{P2},
     id1::Int,
     id2::Int,
-    pr::P,
+    coeff::Float64,
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return PairOperator{P1,P2}(id1, id2, coeff)
+end
+
+function PairOperator(
+    ::Type{P},
+    id1::Int,
+    id2::Int,
     coeff::Float64,
 ) where {P<:AbstractOperatorPrimitive}
-    return PairOperator{P,P}(id1, id2, pr, pr, coeff)
+    return PairOperator(P, P, id1, id2, coeff)
 end
 
 function PairOperator(
+    ::Type{P1},
+    ::Type{P2},
     id1::Int,
     id2::Int,
-    pr1::P1,
-    pr2::P2,
 ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    return PairOperator{P1,P2}(id1, id2, pr1, pr2, 1.0)
+    return PairOperator(P1, P2, id1, id2, 1.0)
 end
 
 function PairOperator(
+    ::Type{P},
     id1::Int,
     id2::Int,
-    pr::P,
 ) where {P<:AbstractOperatorPrimitive}
-    return PairOperator{P,P}(id1, id2, pr, pr, 1.0)
+    return PairOperator(P, P, id1, id2, 1.0)
 end
 
 function Base.show(io::IO, op::PairOperator{P1,P2}) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    @printf io "PairOperator(id1=%d, id2=%d, %s, %s, coeff=%+10.9f)" op.id1 op.id2 nameof(typeof(op.pr1)) nameof(typeof(op.pr2)) op.coeff
+    @printf io "PairOperator{P1=%s,P2=%s}(id1=%d, id2=%d, coeff=%+10.9f)" nameof(P1) nameof(P2) op.id1 op.id2 op.coeff
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::PairOperator{P1,P2}) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
     @printf io "[PairOperator] \n"
+    @printf io "primitive:   (%s, %s)\n" nameof(P1) nameof(P2)
     @printf io "id:          (%d, %d)\n" op.id1 op.id2
-    @printf io "primitive:   (%s, %s)\n" nameof(typeof(op.pr1)) nameof(typeof(op.pr2))
     @printf io "coefficient: %+10.9f\n" op.coeff
 end
 
 struct UniformPairOperator{P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive} <: AbstractOperator
-    pr1::P1
-    pr2::P2
     coeff::Float64
     shell::Int
 end
 
 function UniformPairOperator(
-    pr::P,
+    ::Type{P1},
+    ::Type{P2},
+    coeff::Float64,
+    shell::Int,
+) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
+    return UniformPairOperator{P1,P2}(coeff, shell)
+end
+
+function UniformPairOperator(
+    ::Type{P},
     coeff::Float64,
     shell::Int,
 ) where {P<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P,P}(pr, pr, coeff, shell)
+    return UniformPairOperator(P, P, coeff, shell)
 end
 
 function UniformPairOperator(
-    pr1::P1,
-    pr2::P2,
+    ::Type{P1},
+    ::Type{P2},
     shell::Int,
 ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P1,P2}(pr1, pr2, 1.0, shell)
+    return UniformPairOperator(P1, P2, 1.0, shell)
 end
 
 function UniformPairOperator(
-    pr1::P1,
-    pr2::P2,
+    ::Type{P1},
+    ::Type{P2},
     coeff::Float64,
 ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P1,P2}(pr1, pr2, coeff, 1)
+    return UniformPairOperator(P1, P2, coeff, 1)
 end
 
 function UniformPairOperator(
-    pr1::P1,
-    pr2::P2,
+    ::Type{P1},
+    ::Type{P2},
 ) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P1,P2}(pr1, pr2, 1.0, 1)
+    return UniformPairOperator(P1, P2, 1.0, 1)
 end
 
 function UniformPairOperator(
-    pr::P,
+    ::Type{P},
     shell::Int,
 ) where {P<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P,P}(pr, pr, 1.0, shell)
+    return UniformPairOperator(P, P, 1.0, shell)
 end
 
 function UniformPairOperator(
-    pr::P,
+    ::Type{P},
     coeff::Float64,
 ) where {P<:AbstractOperatorPrimitive}
-    return UniformPairOperator{P,P}(pr, pr, coeff, 1)
+    return UniformPairOperator(P, P, coeff, 1)
+end
+
+function UniformPairOperator(
+    ::Type{P},
+) where {P<:AbstractOperatorPrimitive}
+    return UniformPairOperator(P, P, 1.0, 1)
 end
 
 function Base.show(io::IO, op::UniformPairOperator{P1,P2}) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
-    @printf io "UniformPairOperator(%s, %s, coeff=%+10.9f, shell=%d)" nameof(typeof(op.pr1)) nameof(typeof(op.pr2)) op.coeff op.shell
+    @printf io "UniformPairOperator{P1=%s,P2=%s}(coeff=%+10.9f, shell=%d)" nameof(P1) nameof(P2) op.coeff op.shell
 end
 function Base.show(io::IO, ::MIME"text/plain", op::UniformPairOperator{P1,P2}) where {P1<:AbstractOperatorPrimitive,P2<:AbstractOperatorPrimitive}
     @printf io "[UniformPairOperator]\n"
-    @printf io "primitive:   (%s, %s)\n" nameof(typeof(op.pr1)) nameof(typeof(op.pr2))
+    @printf io "primitive:   (%s, %s)\n" nameof(P1) nameof(P2)
     @printf io "coefficient: %+10.9f\n" op.coeff
     @printf io "shell:       %d\n" op.shell
 end

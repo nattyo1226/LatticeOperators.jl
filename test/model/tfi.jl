@@ -5,8 +5,8 @@ function test_tfi()
     model = TFIHamiltonian(j, h)
     ops = model.ops
     @test length(ops) == 2
-    @test ops[1] == UniformPairOperator(PauliZ(), j, 1)
-    @test ops[2] == UniformOnsiteOperator(PauliX(), h)
+    @test ops[1] == UniformPairOperator(PauliZ, j, 1)
+    @test ops[2] == UniformOnsiteOperator(PauliX, h)
 end
 
 @testset "TFIHamiltonian" begin
