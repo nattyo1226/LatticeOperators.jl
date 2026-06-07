@@ -17,7 +17,7 @@ function TFIHamiltonian(
         error("upper_coeff must be positive.")
     end
 
-    num_sites = num_sites(lattice)
+    num_sites = nsites(lattice)
     pairs = neighbor_pairs(lattice)
     num_neighbor_pairs = length(pairs)
 
@@ -50,24 +50,25 @@ function XYZHamiltonian(
         error("upper_coeff must be positive.")
     end
 
+    num_sites = nsites(lattice)
     pairs = neighbor_pairs(lattice)
     num_neighbor_pairs_per_axis = length(pairs)
     num_neighbor_pairs = num_neighbor_pairs_per_axis * 3 # X, Y, Z
 
     coeffs = (2.0 .* rand(rng, num_sites + num_neighbor_pairs) .- 1.0) .* upper_coeff
 
-    neighbor_ops = [
+    neighbor_ops_x = [
         PairOperator(PauliX, id1, id2, coeffs[num_sites+i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
-    neighbor_ops = [
+    neighbor_ops_y = [
         PairOperator(PauliY, id1, id2, coeffs[num_sites+num_neighbor_pairs_per_axis+i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
-    neighbor_ops = [
+    neighbor_ops_z = [
         PairOperator(PauliZ, id1, id2, coeffs[num_sites+2*num_neighbor_pairs_per_axis+i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
 
-    return SummedOperator(onsite_ops..., neighbor_ops...)
+    return SummedOperator(neighbor_ops_x..., neighbor_ops_y..., neighbor_ops_z...)
 end

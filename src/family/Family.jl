@@ -4,7 +4,7 @@ using Random
 using LatticeGeometry
 
 using ..Primitive: PauliX, PauliY, PauliZ
-using ..Operator: UniformOnsiteOperator, UniformPairOperator, SummedOperator
+using ..Operator: OnsiteOperator, UniformOnsiteOperator, PairOperator, UniformPairOperator, SummedOperator
 
 
 include("hamilaonian.jl")
