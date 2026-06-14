@@ -36,12 +36,16 @@ function Base.show(io::IO, op::SummedOperator)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::SummedOperator)
-    @printf io "[SummedOperator]\n"
     ops = filter(op_sub -> coeff(op_sub) != 0, op.ops)
+    num_ignored = length(op.ops) - length(ops)
 
+    @printf io "[SummedOperator]\n"
     if op.coeff == 1.0
         @printf io "%s" join(string.(ops), " + ")
     else
         @printf io "%f * (%s)" op.coeff join(string.(ops), " + ")
+    end
+    if num_ignored > 0
+        @printf io "(and %d more with zero coefficient)" num_ignored
     end
 end
