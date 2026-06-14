@@ -2,15 +2,12 @@ module Operator
 
 using Printf
 
-using ..LatticeOperator: AbstractOperatorPrimitive, AbstractOperator
+using ..LatticeOperator: AbstractOperatorPrimitive, AbstractOperator, IndexedOperatorPrimitive, SummedOperatorPrimitive, ProductedOperatorPrimitive
 
-include("onsite.jl")
-export OnsiteOperator, UniformOnsiteOperator
+include("tensor.jl")
+export TensoredOperator
 
-include("pair.jl")
-export PairOperator, UniformPairOperator
-
-include("summed.jl")
+include("sum.jl")
 export SummedOperator
 
 

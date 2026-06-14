@@ -1,18 +1,23 @@
 module LatticeOperator
 
+using Printf
+
 include("type.jl")
-export AbstractOperatorPrimitive, AbstractOperator, AbstractOperatorContainer
+export AbstractOperatorPrimitive, AbstractOperator, IndexedOperatorPrimitive
 
 include("primitive/Primitive.jl")
 using .Primitive
-export Identity, PauliX, PauliY, PauliZ
+export Identity
+export PauliX, PauliY, PauliZ
+export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("operator/Operator.jl")
 using .Operator
-export OnsiteOperator, UniformOnsiteOperator, PairOperator, UniformPairOperator, SummedOperator
+export TensoredOperator, SummedOperator
 
 include("family/Family.jl")
 using .Family
-export TFIHamiltonian, XYZHamiltonian
+export UniformOnesiteOperator, UniformTwositeOperator, OnesiteOperator, TwositeOperator, ThreesiteOperator
+export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian
 
 end

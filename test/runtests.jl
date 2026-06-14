@@ -1,7 +1,14 @@
 using LatticeOperator
 using Test
 
-@testset "LatticeOperator.jl" begin
-    include("model/tfi.jl")
-    include("model/xyz.jl")
-end
+using LatticeGeometry
+
+include("primitive/sum.jl")
+include("primitive/product.jl")
+
+include("operator/tensor.jl")
+include("operator/sum.jl")
+
+include("family/tfi.jl")
+include("family/xyz.jl")
+include("family/cluster.jl")
