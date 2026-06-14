@@ -13,9 +13,9 @@ function TensoredOperator(
     prs::Vector{<:AbstractOperatorPrimitive},
     coeff::Float64=1.0,
 )
-    num_prims = length(ids)
+    num_prs = length(ids)
 
-    if num_prims != length(prs)
+    if num_prs != length(prs)
         throw(ArgumentError("Length of ids and prs must be the same"))
     end
 
@@ -23,16 +23,16 @@ function TensoredOperator(
         throw(ArgumentError("All ids must be distinct"))
     end
 
-    prs_build = IndexedOperatorPrimitive[IndexedOperatorPrimitive(ids[i], prs[i]) for i in 1:num_prims]
+    prs_build = IndexedOperatorPrimitive[IndexedOperatorPrimitive(ids[i], prs[i]) for i in 1:num_prs]
     return TensoredOperator(prs_build, coeff)
 end
 
 function TensoredOperator(
     id::Int,
-    prim::AbstractOperatorPrimitive,
+    pr::AbstractOperatorPrimitive,
     coeff::Float64=1.0,
 )
-    return TensoredOperator([id], [prim], coeff)
+    return TensoredOperator([id], [pr], coeff)
 end
 
 function coeff(op::TensoredOperator)
