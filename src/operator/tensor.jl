@@ -51,14 +51,17 @@ function Base.hash(op::TensoredOperator, h::UInt)
 end
 
 function Base.show(io::IO, op::TensoredOperator)
-    @printf io "TensoredOperator([%s], %f)" join(string.(op.prs), ", ") op.coeff
+    @printf io "TensoredOperator([%s], %g)" join(string.(op.prs), ", ") op.coeff
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator)
     @printf io "[TensoredOperator]\n"
-    if op.coeff == 1.0
-        @printf io "%s" join(string.(op.prs), " ⊗ ")
-    else
-        @printf io "%f * (%s)" op.coeff join(string.(op.prs), " ⊗ ")
+
+    for pr in op.prs
+        @printf io "%s\n" string(pr)
+    end
+
+    if !isapprox(op.coeff, 1.0)
+        @printf io "Coefficient: %g" op.coeff
     end
 end

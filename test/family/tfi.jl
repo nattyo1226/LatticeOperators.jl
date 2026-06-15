@@ -9,8 +9,8 @@ function test_tfi()
     model = TFIHamiltonian(lattice, j, h)
     ops = model.ops
     @test length(ops) == 2
-    @test ops[1] == UniformTwositeOperator(lattice, PauliZ(), PauliZ(), 1, j)
-    @test ops[2] == UniformOnesiteOperator(lattice, PauliX(), h)
+    @test ops[1] == UniformTwoSiteOperator(lattice, PauliZ(), PauliZ(), 1, j)
+    @test ops[2] == UniformOneSiteOperator(lattice, PauliX(), h)
 end
 
 @testset "TFIHamiltonian" begin

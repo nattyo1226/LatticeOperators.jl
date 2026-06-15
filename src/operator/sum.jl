@@ -31,21 +31,17 @@ function Base.hash(op::SummedOperator, h::UInt)
 end
 
 function Base.show(io::IO, op::SummedOperator)
-    ops = filter(op_sub -> coeff(op_sub) != 0, op.ops)
-    @printf io "SummedOperator([%s], %f)" join(string.(ops), ", ") op.coeff
+    @printf io "SummedOperator([%s], %g)" join(string.(op.ops), ", ") op.coeff
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::SummedOperator)
-    ops = filter(op_sub -> coeff(op_sub) != 0, op.ops)
-    num_ignored = length(op.ops) - length(ops)
-
     @printf io "[SummedOperator]\n"
-    if op.coeff == 1.0
-        @printf io "%s" join(string.(ops), " + ")
-    else
-        @printf io "%f * (%s)" op.coeff join(string.(ops), " + ")
+
+    for op in op.ops
+        @printf io "%s\n" string(op)
     end
-    if num_ignored > 0
-        @printf io "(and %d more with zero coefficient)" num_ignored
+
+    if !isapprox(op.coeff, 1.0)
+        @printf io "Coefficient: %g" op.coeff
     end
 end

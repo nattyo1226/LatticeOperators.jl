@@ -10,9 +10,9 @@ function test_xyz()
     model = XYZHamiltonian(lattice, jx, jy, jz)
     ops = model.ops
     @test length(ops) == 3
-    @test ops[1] == UniformTwositeOperator(lattice, PauliX(), PauliX(), 1, jx)
-    @test ops[2] == UniformTwositeOperator(lattice, PauliY(), PauliY(), 1, jy)
-    @test ops[3] == UniformTwositeOperator(lattice, PauliZ(), PauliZ(), 1, jz)
+    @test ops[1] == UniformTwoSiteOperator(lattice, PauliX(), PauliX(), 1, jx)
+    @test ops[2] == UniformTwoSiteOperator(lattice, PauliY(), PauliY(), 1, jy)
+    @test ops[3] == UniformTwoSiteOperator(lattice, PauliZ(), PauliZ(), 1, jz)
 end
 
 @testset "XYZHamiltonian" begin

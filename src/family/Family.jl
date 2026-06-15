@@ -8,7 +8,7 @@ using ..Primitive: PauliX, PauliY, PauliZ
 using ..Operator: TensoredOperator, SummedOperator
 
 include("operator.jl")
-export OnesiteOperator, UniformOnesiteOperator, TwositeOperator, UniformTwositeOperator, ThreesiteOperator
+export OneSiteOperator, UniformOneSiteOperator, TwoSiteOperator, UniformTwoSiteOperator, ThreeSiteOperator
 
 include("hamilaonian.jl")
 export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian

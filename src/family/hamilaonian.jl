@@ -6,8 +6,8 @@ function TFIHamiltonian(
     shell = 1
 
     return SummedOperator(
-        UniformTwositeOperator(lattice, PauliZ(), PauliZ(), shell, j),
-        UniformOnesiteOperator(lattice, PauliX(), h),
+        UniformTwoSiteOperator(lattice, PauliZ(), PauliZ(), shell, j),
+        UniformOneSiteOperator(lattice, PauliX(), h),
     )
 end
 
@@ -26,10 +26,10 @@ function TFIHamiltonian(
 
     coeffs = (2.0 .* rand(rng, num_sites + num_neighbor_pairs) .- 1.0) .* upper_coeff
 
-    onesite_ops = [OnesiteOperator(i, PauliX(), coeffs[i]) for i in 1:num_sites]
-    twosite_ops = [TwositeOperator(i, j, PauliZ(), PauliZ(), coeffs[num_sites+i]) for (i, j) in pairs]
+    one_site_ops = [OneSiteOperator(i, PauliX(), coeffs[i]) for i in 1:num_sites]
+    two_site_ops = [TwoSiteOperator(i, j, PauliZ(), PauliZ(), coeffs[num_sites+i]) for (i, j) in pairs]
 
-    return SummedOperator(onesite_ops..., twosite_ops...)
+    return SummedOperator(one_site_ops..., two_site_ops...)
 end
 
 function XYZHamiltonian(
@@ -39,9 +39,9 @@ function XYZHamiltonian(
     jz::Float64,
 )
     return SummedOperator(
-        UniformTwositeOperator(lattice, PauliX(), PauliX(), 1, jx),
-        UniformTwositeOperator(lattice, PauliY(), PauliY(), 1, jy),
-        UniformTwositeOperator(lattice, PauliZ(), PauliZ(), 1, jz),
+        UniformTwoSiteOperator(lattice, PauliX(), PauliX(), 1, jx),
+        UniformTwoSiteOperator(lattice, PauliY(), PauliY(), 1, jy),
+        UniformTwoSiteOperator(lattice, PauliZ(), PauliZ(), 1, jz),
     )
 end
 
@@ -59,20 +59,20 @@ function XYZHamiltonian(
 
     coeffs = (2.0 .* rand(rng, num_neighbor_pairs * 3) .- 1.0) .* upper_coeff
 
-    twosite_ops_x = [
-        TwositeOperator(id1, id2, PauliX(), PauliX(), coeffs[i])
+    two_site_ops_x = [
+        TwoSiteOperator(id1, id2, PauliX(), PauliX(), coeffs[i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
-    twosite_ops_y = [
-        TwositeOperator(id1, id2, PauliY(), PauliY(), coeffs[num_neighbor_pairs+i])
+    two_site_ops_y = [
+        TwoSiteOperator(id1, id2, PauliY(), PauliY(), coeffs[num_neighbor_pairs+i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
-    twosite_ops_z = [
-        TwositeOperator(id1, id2, PauliZ(), PauliZ(), coeffs[2*num_neighbor_pairs+i])
+    two_site_ops_z = [
+        TwoSiteOperator(id1, id2, PauliZ(), PauliZ(), coeffs[2*num_neighbor_pairs+i])
         for (i, (id1, id2)) in enumerate(pairs)
     ]
 
-    return SummedOperator(twosite_ops_x..., twosite_ops_y..., twosite_ops_z...)
+    return SummedOperator(two_site_ops_x..., two_site_ops_y..., two_site_ops_z...)
 end
 
 function ClusterHamiltonian(lattice::Lattice, coeffs::Vector{Float64}=fill(1.0, nsites(lattice)))

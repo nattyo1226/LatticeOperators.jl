@@ -17,7 +17,7 @@ export TensoredOperator, SummedOperator
 
 include("family/Family.jl")
 using .Family
-export UniformOnesiteOperator, UniformTwositeOperator, OnesiteOperator, TwositeOperator, ThreesiteOperator
+export UniformOneSiteOperator, UniformTwoSiteOperator, OneSiteOperator, TwoSiteOperator, ThreeSiteOperator
 export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian
 
 end
