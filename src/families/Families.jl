@@ -1,11 +1,10 @@
-module Family
+module Families
 
 using Random
-using LatticeGeometry
+using LatticeSpaces
 
-using ..LatticeOperator: AbstractOperatorPrimitive, AbstractOperator
-using ..Primitive: PauliX, PauliY, PauliZ
-using ..Operator: TensoredOperator, SummedOperator
+using ..Primitives: AbstractOperatorPrimitive, PauliX, PauliY, PauliZ
+using ..Operators: TensoredOperator, SummedOperator
 
 include("operator.jl")
 export OneSiteOperator, UniformOneSiteOperator, TwoSiteOperator, UniformTwoSiteOperator, ThreeSiteOperator

@@ -1,6 +1,7 @@
 function test_tensored_operator()
-    pr1 = IndexedOperatorPrimitive(1, PauliX())
-    pr2 = IndexedOperatorPrimitive(2, PauliY())
+    T = SpinHalfTag
+    pr1 = IndexedOperatorPrimitive(SiteIndex{T}(1), PauliX())
+    pr2 = IndexedOperatorPrimitive(SiteIndex{T}(2), PauliY())
     op = TensoredOperator([pr1, pr2], 0.5)
 
     @test op.coeff == 0.5

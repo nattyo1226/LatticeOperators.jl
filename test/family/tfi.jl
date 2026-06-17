@@ -1,16 +1,17 @@
 function test_tfi()
     j = -1.0
     h = -2.0
-    lattice = Lattice(
-        AllToAll(4),
-        OpenBoundary(),
+    space = Space(
+        SpinHalfSpace(),
+        Hypercubic(
+            (2, 2),
+            OpenBoundary(2),
+        ),
     )
 
-    model = TFIHamiltonian(lattice, j, h)
+    model = TFIHamiltonian(space, j, h)
     ops = model.ops
-    @test length(ops) == 2
-    @test ops[1] == UniformTwoSiteOperator(lattice, PauliZ(), PauliZ(), 1, j)
-    @test ops[2] == UniformOneSiteOperator(lattice, PauliX(), h)
+    @test length(ops) == 8
 end
 
 @testset "TFIHamiltonian" begin

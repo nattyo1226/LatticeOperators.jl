@@ -1,7 +1,7 @@
-using LatticeOperator
+using LatticeOperators
 using Test
 
-using LatticeGeometry
+using LatticeSpaces
 
 include("primitive/sum.jl")
 include("primitive/product.jl")

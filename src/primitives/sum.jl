@@ -1,8 +1,8 @@
-struct SummedOperatorPrimitive <: AbstractOperatorPrimitive
-    prs::Vector{<:AbstractOperatorPrimitive}
+struct SummedOperatorPrimitive{T<:AbstractSystemTag} <: AbstractOperatorPrimitive{T}
+    prs::Vector{<:AbstractOperatorPrimitive{T}}
 end
 
-function Base.:(==)(pr1::SummedOperatorPrimitive, pr2::SummedOperatorPrimitive)
+function Base.:(==)(pr1::SummedOperatorPrimitive{T}, pr2::SummedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
     return Set(pr1.prs) == Set(pr2.prs)
 end
 

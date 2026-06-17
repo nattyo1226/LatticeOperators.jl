@@ -1,22 +1,21 @@
-module LatticeOperator
+module LatticeOperators
 
 using Printf
 
-include("type.jl")
-export AbstractOperatorPrimitive, AbstractOperator, IndexedOperatorPrimitive
-
-include("primitive/Primitive.jl")
-using .Primitive
+include("primitives/Primitives.jl")
+using .Primitives
+export AbstractOperatorPrimitive, IndexedOperatorPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
+export MajoranaX, MajoranaY, MajoranaZ
 export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
-include("operator/Operator.jl")
-using .Operator
+include("operators/Operators.jl")
+using .Operators
 export TensoredOperator, SummedOperator
 
-include("family/Family.jl")
-using .Family
+include("families/Families.jl")
+using .Families
 export UniformOneSiteOperator, UniformTwoSiteOperator, OneSiteOperator, TwoSiteOperator, ThreeSiteOperator
 export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian
 

@@ -1,8 +1,8 @@
-abstract type AbstractOperatorPrimitive end
+abstract type AbstractOperatorPrimitive{T<:AbstractSystemTag} end
 
-struct IndexedOperatorPrimitive
-    id::Int
-    pr::AbstractOperatorPrimitive
+struct IndexedOperatorPrimitive{T<:AbstractSystemTag,I<:AbstractIndex{T},P<:AbstractOperatorPrimitive{T}}
+    id::I
+    pr::P
 end
 
 function Base.:(==)(
@@ -17,17 +17,11 @@ function Base.hash(op::IndexedOperatorPrimitive, h::UInt)
 end
 
 function Base.show(io::IO, op::IndexedOperatorPrimitive)
-    @printf io "%s%d" op.pr op.id
+    @printf io "%s%s" op.pr op.id
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::IndexedOperatorPrimitive)
     @printf io "[IndexedOperatorPrimitive]\n"
-    @printf io "id: %d\n" op.id
+    @printf io "id: %s\n" op.id
     @printf io "primitive: %s\n" op.pr
-end
-
-abstract type AbstractOperator end
-
-function coeff(::AbstractOperator)
-    throw(ArgumentError("Coefficient not defined for this operator type"))
 end
