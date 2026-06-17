@@ -41,13 +41,23 @@ function Base.hash(op::SummedOperator, h::UInt)
     return hash(Set(op.ops), h)
 end
 
+function Base.:(*)(c::Number, op::SummedOperator{T}) where {T<:AbstractSystemTag}
+    ops_scaled = [c * op for op in op.ops]
+    return SummedOperator(ops_scaled)
+end
+
+function Base.:(-)(op::SummedOperator)
+    ops_neg = [-op for op in op.ops]
+    return SummedOperator(ops_neg)
+end
+
 function Base.adjoint(op::SummedOperator)
     ops_adj = [adjoint(op) for op in op.ops]
     return SummedOperator(ops_adj)
 end
 
 function Base.show(io::IO, op::SummedOperator)
-    @printf io "SummedOperator([%s], %g)" join(string.(op.ops), ", ") op.coeff
+    @printf io "SummedOperator([%s])" join(string.(op.ops), ", ")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::SummedOperator)
@@ -55,9 +65,5 @@ function Base.show(io::IO, ::MIME"text/plain", op::SummedOperator)
 
     for op in op.ops
         @printf io "%s\n" string(op)
-    end
-
-    if !isapprox(op.coeff, 1.0)
-        @printf io "Coefficient: %g" op.coeff
     end
 end

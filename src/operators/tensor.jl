@@ -86,14 +86,27 @@ function Base.isless(op1::TensoredOperator{T,I}, op2::TensoredOperator{T,I}) whe
     return ids1 < ids2
 end
 
+function Base.:(*)(c::Number, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
+    coeff = coeff_type(T)(c) * op.coeff
+    return TensoredOperator(op.prs, coeff)
+end
+
+function Base.:(-)(op::TensoredOperator)
+    return (-1.0) * op
+end
+
 function Base.adjoint(op::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
     prs_adj = reverse(op.prs)
     coeff_adj = conj(op.coeff)
     return TensoredOperator(prs_adj, coeff_adj)
 end
 
-function Base.show(io::IO, op::TensoredOperator)
-    @printf io "TensoredOperator([%s], %g)" join(string.(op.prs), ", ") op.coeff
+function Base.show(io::IO, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
+    if coeff_type(T) <: Complex
+        @printf io "TensoredOperator([%s], %g + %gim)" join(string.(op.prs), ", ") real(op.coeff) imag(op.coeff)
+    else
+        @printf io "TensoredOperator([%s], %g)" join(string.(op.prs), ", ") op.coeff
+    end
 end
 
 function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator)
