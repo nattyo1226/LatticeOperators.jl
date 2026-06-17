@@ -2,6 +2,7 @@ struct SummedOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOpera
     ops::Vector{TensoredOperator{T,I}}
 
     function SummedOperator(ops::Vector{TensoredOperator{T,I}}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+        ops = sort(ops)
         return new{T,I}(ops)
     end
 end
@@ -33,11 +34,16 @@ function Base.:(==)(
     op1::SummedOperator{T,I},
     op2::SummedOperator{T,I},
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return Set(op1.ops) == Set(op2.ops) && op1.coeff == op2.coeff
+    return Set(op1.ops) == Set(op2.ops)
 end
 
 function Base.hash(op::SummedOperator, h::UInt)
-    return hash((Set(op.ops), op.coeff), h)
+    return hash(Set(op.ops), h)
+end
+
+function Base.adjoint(op::SummedOperator)
+    ops_adj = [adjoint(op) for op in op.ops]
+    return SummedOperator(ops_adj)
 end
 
 function Base.show(io::IO, op::SummedOperator)

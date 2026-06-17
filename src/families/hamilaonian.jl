@@ -1,11 +1,11 @@
 function TFIHamiltonian(
-    space::Space,
+    space::Space{SpinHalfTag},
     j::Float64,
     h::Float64,
 )
     return SummedOperator(
-        UniformTwoSiteOperator(space, PauliZ(), PauliZ(), j),
         UniformOneSiteOperator(space, PauliX(), h),
+        UniformTwoSiteOperator(space, PauliZ(), PauliZ(), j),
     )
 end
 
@@ -87,7 +87,7 @@ end
 
 function ClusterHamiltonian(
     space::Space,
-    coeffs::Vector{Float64}=fill(1.0, length(indices(space))),
+    coeffs::AbstractVector{Float64}=fill(1.0, length(indices(space))),
 )
     if !(space.geometry isa Hypercubic)
         println("Space geometry: ", typeof(space.geometry))

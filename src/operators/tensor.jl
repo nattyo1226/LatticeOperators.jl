@@ -23,23 +23,28 @@ end
 
 struct TensoredOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOperator{T,I}
     prs::Vector{IndexedOperatorPrimitive{T,I}}
-    coeff::Float64
+    coeff::Number
 
     function TensoredOperator(
         prs::AbstractVector{<:IndexedOperatorPrimitive{T,I}},
-        coeff::Float64=1.0,
+        coeff::Number=1.0,
     ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+        coeff = coeff_type(T)(coeff)
+
         p = sortperm(prs, by=x->x.id)
-        prs_sorted = prs[p]
-        coeff_sorted = coeff * perm_parity(p)
-        return new{T,I}(prs_sorted, coeff_sorted)
+        prs = prs[p]
+        if T == FermionTag
+            coeff *= perm_parity(p)
+        end
+
+        return new{T,I}(prs, coeff)
     end
 end
 
 function TensoredOperator(
     ids::AbstractVector{I},
     prs::AbstractVector{<:AbstractOperatorPrimitive{T}},
-    coeff::Float64=1.0,
+    coeff::Number=1.0,
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
     num_prs = length(ids)
 
@@ -52,13 +57,14 @@ function TensoredOperator(
     end
 
     prs_build = [IndexedOperatorPrimitive(ids[i], prs[i]) for i in 1:num_prs]
+
     return TensoredOperator(prs_build, coeff)
 end
 
 function TensoredOperator(
     id::I,
     pr::P,
-    coeff::Float64=1.0,
+    coeff::Number=1.0,
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T},P<:AbstractOperatorPrimitive{T}}
     return TensoredOperator([id], [pr], coeff)
 end
@@ -77,7 +83,13 @@ end
 function Base.isless(op1::TensoredOperator{T,I}, op2::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
     ids1 = ntuple(i -> op1.prs[i].id, length(op1.prs))
     ids2 = ntuple(i -> op2.prs[i].id, length(op2.prs))
-    return ids1 < ids2 || (ids1 == ids2 && op1.coeff < op2.coeff)
+    return ids1 < ids2
+end
+
+function Base.adjoint(op::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    prs_adj = reverse(op.prs)
+    coeff_adj = conj(op.coeff)
+    return TensoredOperator(prs_adj, coeff_adj)
 end
 
 function Base.show(io::IO, op::TensoredOperator)
