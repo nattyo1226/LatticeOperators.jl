@@ -10,7 +10,6 @@ function test_hubbard()
     )
 
     model = HubbardHamiltonian(space, t, u)
-    display(model)
     @test model' == model
 
     ops = model.ops
