@@ -13,7 +13,7 @@ end
 
 function TFIHamiltonian(
     rng::AbstractRNG,
-    space::Space,
+    space::Space{SpinHalfTag},
     upper_coeff::Float64,
 )
     if upper_coeff <= 0
@@ -39,7 +39,7 @@ function TFIHamiltonian(
 end
 
 function XYZHamiltonian(
-    space::Space,
+    space::Space{SpinHalfTag},
     jx::Float64,
     jy::Float64,
     jz::Float64,
@@ -53,7 +53,7 @@ end
 
 function XYZHamiltonian(
     rng::AbstractRNG,
-    space::Space,
+    space::Space{SpinHalfTag},
     upper_coeff::Float64,
 )
     if upper_coeff <= 0
@@ -88,7 +88,7 @@ function XYZHamiltonian(
 end
 
 function ClusterHamiltonian(
-    space::Space,
+    space::Space{SpinHalfTag},
     coeffs::AbstractVector{Float64}=fill(1.0, length(indices(space))),
 )
     if !(space.geometry isa Hypercubic)
@@ -122,7 +122,7 @@ end
 
 function ClusterHamiltonian(
     rng::AbstractRNG,
-    space::Space,
+    space::Space{SpinHalfTag},
     upper_coeff::Float64,
 )
     num_sites = length(indices(space))
@@ -132,7 +132,7 @@ function ClusterHamiltonian(
 end
 
 function HubbardHamiltonian(
-    space::Space,
+    space::Space{FermionTag},
     t::Float64,
     u::Float64,
 )
