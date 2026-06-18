@@ -65,11 +65,11 @@ function Base.hash(op::TensoredOperator, h::UInt)
 end
 
 function Base.isless(op1::TensoredOperator{T,I}, op2::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    ids1 = ntuple(i -> op1.prs[i].id, length(op1.prs))
-    ids2 = ntuple(i -> op2.prs[i].id, length(op2.prs))
     prs1 = ntuple(i -> op1.prs[i].pr, length(op1.prs))
     prs2 = ntuple(i -> op2.prs[i].pr, length(op2.prs))
-    return ids1 < ids2 || (ids1 == ids2 && prs1 < prs2)
+    ids1 = ntuple(i -> op1.prs[i].id, length(op1.prs))
+    ids2 = ntuple(i -> op2.prs[i].id, length(op2.prs))
+    return prs1 < prs2 || (prs1 == prs2 && ids1 < ids2)
 end
 
 function Base.:(*)(c::Number, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
