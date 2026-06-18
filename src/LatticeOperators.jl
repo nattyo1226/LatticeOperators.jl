@@ -12,6 +12,7 @@ export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("operators/Operators.jl")
 using .Operators
+export AbstractOperator
 export TensoredOperator, SummedOperator
 
 include("families/Families.jl")
