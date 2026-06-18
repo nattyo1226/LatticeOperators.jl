@@ -162,7 +162,7 @@ function HubbardHamiltonian(
         for site in 1:nsites(space)
     ])
     interaction2 = SummedOperator([
-        TensoredOperator(id, MajoranaZ(), u / 4)
+        TensoredOperator(id, MajoranaZ(), -u / 4)
         for labels in local_labels(space)
         for id in indices_with_fixed_labels(space, labels)
     ])

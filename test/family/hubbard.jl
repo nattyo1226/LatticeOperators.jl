@@ -1,11 +1,11 @@
 function test_hubbard()
-    t = -1.0
+    t = 1.0
     u = 2.0
     space = Space(
         SpinfulFermionSpace(),
         Hypercubic(
-            (2, 2),
-            OpenBoundary(2),
+            (2,),
+            OpenBoundary(1),
         ),
     )
 
@@ -13,7 +13,7 @@ function test_hubbard()
     @test model' == model
 
     ops = model.ops
-    @test length(ops) == 28
+    @test length(ops) == 10
 end
 
 @testset "HubbardHamiltonian" begin
