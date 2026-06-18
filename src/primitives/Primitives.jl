@@ -4,7 +4,7 @@ using LatticeSpaces
 using Printf
 
 include("type.jl")
-export AbstractOperatorPrimitive, IndexedOperatorPrimitive
+export AbstractOperatorPrimitive, majorana_grade, IndexedOperatorPrimitive
 
 include("identity.jl")
 export Identity

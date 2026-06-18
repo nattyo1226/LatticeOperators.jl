@@ -1,5 +1,17 @@
 abstract type AbstractOperatorPrimitive{T<:AbstractSystemTag} end
 
+function order_key(pr::AbstractOperatorPrimitive)
+    throw(ArgumentError("order_key is not defined for $(typeof(pr))"))
+end
+
+function Base.isless(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
+    return order_key(pr1) < order_key(pr2)
+end
+
+function majorana_grade(::AbstractOperatorPrimitive)
+    return 0
+end
+
 struct IndexedOperatorPrimitive{T<:AbstractSystemTag,I<:AbstractIndex{T},P<:AbstractOperatorPrimitive{T}}
     id::I
     pr::P

@@ -1,24 +1,14 @@
-function perm_parity(perm::AbstractArray{Int})
-    n = length(perm)
-    visited = falses(n)
-    odd = false
-
-    for i in 1:n
-        visited[i] && continue
-
-        len = 0
-        j = i
-
-        while !visited[j]
-            visited[j] = true
-            j = perm[j]
-            len += 1
+function normalize(prs::AbstractVector{<:IndexedOperatorPrimitive{T,I}}, coeff::Number) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    inv_grade = 0
+    for i in eachindex(prs)
+        for j in (i+1):length(prs)
+            if prs[i].id > prs[j].id
+                inv_grade += majorana_grade(prs[i].pr) * majorana_grade(prs[j].pr)
+            end
         end
-
-        odd ⊻= iseven(len)
     end
-
-    return odd ? -1 : 1
+    sign = isodd(inv_grade) ? -1 : 1
+    return sort(prs; by=x->x.id), sign * coeff
 end
 
 struct TensoredOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOperator{T,I}
@@ -30,14 +20,8 @@ struct TensoredOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOpe
         coeff::Number=1.0,
     ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
         coeff = coeff_type(T)(coeff)
-
-        p = sortperm(prs, by=x->x.id)
-        prs = prs[p]
-        if T == FermionTag
-            coeff *= perm_parity(p)
-        end
-
-        return new{T,I}(prs, coeff)
+        prs_n, coeff_n = normalize(prs, coeff)
+        return new{T,I}(prs_n, coeff_n)
     end
 end
 
@@ -83,7 +67,9 @@ end
 function Base.isless(op1::TensoredOperator{T,I}, op2::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
     ids1 = ntuple(i -> op1.prs[i].id, length(op1.prs))
     ids2 = ntuple(i -> op2.prs[i].id, length(op2.prs))
-    return ids1 < ids2
+    prs1 = ntuple(i -> op1.prs[i].pr, length(op1.prs))
+    prs2 = ntuple(i -> op2.prs[i].pr, length(op2.prs))
+    return ids1 < ids2 || (ids1 == ids2 && prs1 < prs2)
 end
 
 function Base.:(*)(c::Number, op::TensoredOperator{T}) where {T<:AbstractSystemTag}

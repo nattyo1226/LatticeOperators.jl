@@ -10,6 +10,8 @@ function test_tfi()
     )
 
     model = TFIHamiltonian(space, j, h)
+    @test model' == model
+
     ops = model.ops
     @test length(ops) == 8
 end

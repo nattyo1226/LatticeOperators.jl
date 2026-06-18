@@ -5,6 +5,8 @@ function test_cluster()
     )
 
     model = ClusterHamiltonian(space)
+    @test model' == model
+
     ops = model.ops
     @test length(ops) == 4
 end

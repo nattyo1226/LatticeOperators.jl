@@ -34,7 +34,7 @@ function Base.:(==)(
     op1::SummedOperator{T,I},
     op2::SummedOperator{T,I},
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return Set(op1.ops) == Set(op2.ops)
+    return length(op1.ops) == length(op2.ops) && all(op1.ops .== op2.ops)
 end
 
 function Base.hash(op::SummedOperator, h::UInt)

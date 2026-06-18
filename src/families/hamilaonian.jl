@@ -1,3 +1,5 @@
+# Note: All coefficients are trearted with positive sign in each model.
+
 function TFIHamiltonian(
     space::Space{SpinHalfTag},
     j::Float64,
@@ -129,13 +131,45 @@ function ClusterHamiltonian(
     return ClusterHamiltonian(space, coeffs)
 end
 
-# function HubbardHamiltonian(
-#     space::Space,
-#     t::Float64,
-#     u::Float64,
-# )
-#     return SummedOperator(
-#         UniformTwoSiteOperator(space, FermionCreation(), FermionAnnihilation(), 1, t),
-#         UniformOneSiteOperator(space, NumberOperator(), u),
-#     )
-# end
+function HubbardHamiltonian(
+    space::Space,
+    t::Float64,
+    u::Float64,
+)
+    hopping1 = SummedOperator([
+        TensoredOperator(
+            [id1, id2],
+            [MajoranaX(), MajoranaY()],
+            t * im / 2,
+        )
+        for (id1, id2) in neighbor_pairs_with_same_labels(space)
+    ])
+    hopping2 = SummedOperator([
+        TensoredOperator(
+            [id1, id2],
+            [MajoranaY(), MajoranaX()],
+            -t * im / 2,
+        )
+        for (id1, id2) in neighbor_pairs_with_same_labels(space)
+    ])
+
+    interaction1 = SummedOperator([
+        TensoredOperator(
+            indices_with_fixed_site(space, site),
+            [MajoranaZ(), MajoranaZ()],
+            u / 4,
+        )
+        for site in 1:nsites(space)
+    ])
+    interaction2 = SummedOperator([
+        TensoredOperator(id, MajoranaZ(), u / 4)
+        for labels in local_labels(space)
+        for id in indices_with_fixed_labels(space, labels)
+    ])
+    return SummedOperator(
+        hopping1,
+        hopping2,
+        interaction1,
+        interaction2,
+    )
+end

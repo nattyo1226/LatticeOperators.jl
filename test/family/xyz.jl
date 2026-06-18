@@ -11,6 +11,8 @@ function test_xyz()
     )
 
     model = XYZHamiltonian(space, jx, jy, jz)
+    @test model' == model
+
     ops = model.ops
     @test length(ops) == 12
 end
