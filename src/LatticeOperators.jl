@@ -8,7 +8,6 @@ export AbstractOperatorPrimitive, majorana_grade
 export IndexedOperatorPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
-export MajoranaX, MajoranaY, MajoranaZ
 export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("operators/Operators.jl")

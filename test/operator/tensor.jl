@@ -1,8 +1,10 @@
 function test_tensored_operator_1()
     T = SpinHalfTag
-    pr1 = IndexedOperatorPrimitive(SiteIndex{T}(1), PauliX())
-    pr2 = IndexedOperatorPrimitive(SiteIndex{T}(2), PauliY())
-    op = TensoredOperator([pr1, pr2], 0.5)
+    px = PauliX{T}()
+    py = PauliY{T}()
+    pr1 = IndexedOperatorPrimitive(SiteIndex{T}(1), px)
+    pr2 = IndexedOperatorPrimitive(SiteIndex{T}(2), py)
+    op = TensoredOperator([pr1, pr2,], 0.5)
 
     @test op.coeff == 0.5
     @test length(op.prs) == 2
@@ -13,9 +15,12 @@ function test_tensored_operator_1()
 end
 
 function test_tensored_operator_2()
-    pr1 = IndexedOperatorPrimitive(SiteSpinIndex(1, Up), MajoranaX())
-    pr2 = IndexedOperatorPrimitive(SiteSpinIndex(2, Down), MajoranaY())
-    pr3 = IndexedOperatorPrimitive(SiteSpinIndex(3, Down), MajoranaY())
+    T = FermionTag
+    px = PauliX{T}()
+    py = PauliY{T}()
+    pr1 = IndexedOperatorPrimitive(SiteSpinIndex(1, Up), px)
+    pr2 = IndexedOperatorPrimitive(SiteSpinIndex(2, Down), py)
+    pr3 = IndexedOperatorPrimitive(SiteSpinIndex(3, Down), py)
     coeff = 1.0 + 0.5im
     op = TensoredOperator([pr1, pr2, pr3], coeff)
 

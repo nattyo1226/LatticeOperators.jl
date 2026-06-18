@@ -13,8 +13,6 @@ export Identity
 include("pauli.jl")
 export PauliX, PauliY, PauliZ
 
-include("majorana.jl")
-export MajoranaX, MajoranaY, MajoranaZ
 
 include("sum.jl")
 export SummedOperatorPrimitive

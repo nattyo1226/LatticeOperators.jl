@@ -5,9 +5,11 @@ function TFIHamiltonian(
     j::Float64,
     h::Float64,
 )
+    px = PauliX{SpinHalfTag}()
+    pz = PauliZ{SpinHalfTag}()
     return SummedOperator(
-        UniformOneSiteOperator(space, PauliX(), h),
-        UniformTwoSiteOperator(space, PauliZ(), PauliZ(), j),
+        UniformOneSiteOperator(space, px, h),
+        UniformTwoSiteOperator(space, pz, pz, j),
     )
 end
 
@@ -20,17 +22,20 @@ function TFIHamiltonian(
         error("upper_coeff must be positive.")
     end
 
+    px = PauliX{SpinHalfTag}()
+    pz = PauliZ{SpinHalfTag}()
+
     one_site_ops = [
         begin
             coeff = (2.0 * rand(rng) - 1.0) * upper_coeff
-            OneSiteOperator(id, PauliX(), coeff)
+            OneSiteOperator(id, px, coeff)
         end
         for id in indices(space)
     ]
     two_site_ops = [
         begin
             coeff = (2.0 * rand(rng) - 1.0) * upper_coeff
-            TwoSiteOperator(id1, id2, PauliZ(), PauliZ(), coeff)
+            TwoSiteOperator(id1, id2, pz, pz, coeff)
         end
         for (id1, id2) in neighbor_pairs(space)
     ]
@@ -44,10 +49,14 @@ function XYZHamiltonian(
     jy::Float64,
     jz::Float64,
 )
+    px = PauliX{SpinHalfTag}()
+    py = PauliY{SpinHalfTag}()
+    pz = PauliZ{SpinHalfTag}()
+
     return SummedOperator(
-        UniformTwoSiteOperator(space, PauliX(), PauliX(), jx),
-        UniformTwoSiteOperator(space, PauliY(), PauliY(), jy),
-        UniformTwoSiteOperator(space, PauliZ(), PauliZ(), jz),
+        UniformTwoSiteOperator(space, px, px, jx),
+        UniformTwoSiteOperator(space, py, py, jy),
+        UniformTwoSiteOperator(space, pz, pz, jz),
     )
 end
 
@@ -60,26 +69,30 @@ function XYZHamiltonian(
         error("upper_coeff must be positive.")
     end
 
+    px = PauliX{SpinHalfTag}()
+    py = PauliY{SpinHalfTag}()
+    pz = PauliZ{SpinHalfTag}()
+
     pairs = neighbor_pairs(space)
 
     two_site_ops_x = [
         begin
             coeff = (2.0 * rand(rng) - 1.0) * upper_coeff
-            TwoSiteOperator(id1, id2, PauliX(), PauliX(), coeff)
+            TwoSiteOperator(id1, id2, px, px, coeff)
         end
         for (id1, id2) in pairs
     ]
     two_site_ops_y = [
         begin
             coeff = (2.0 * rand(rng) - 1.0) * upper_coeff
-            TwoSiteOperator(id1, id2, PauliY(), PauliY(), coeff)
+            TwoSiteOperator(id1, id2, py, py, coeff)
         end
         for (id1, id2) in pairs
     ]
     two_site_ops_z = [
         begin
             coeff = (2.0 * rand(rng) - 1.0) * upper_coeff
-            TwoSiteOperator(id1, id2, PauliZ(), PauliZ(), coeff)
+            TwoSiteOperator(id1, id2, pz, pz, coeff)
         end
         for (id1, id2) in pairs
     ]
@@ -96,6 +109,9 @@ function ClusterHamiltonian(
         throw(ArgumentError("ClusterHamiltonian requires a hypercubic lattice."))
     end
 
+    px = PauliX{SpinHalfTag}()
+    pz = PauliZ{SpinHalfTag}()
+
     num_sites = nsites(space.geometry)
     if num_sites != length(coeffs)
         throw(ArgumentError("Length of coeffs must match the number of sites in the lattice."))
@@ -111,7 +127,7 @@ function ClusterHamiltonian(
             ops,
             TensoredOperator(
                 [id; ns],
-                [PauliZ(); fill(PauliX(), num_neighbors)],
+                [pz; fill(px, num_neighbors)],
                 coeffs[i],
             )
         )
@@ -136,10 +152,14 @@ function HubbardHamiltonian(
     t::Float64,
     u::Float64,
 )
+    px = PauliX{FermionTag}()
+    py = PauliY{FermionTag}()
+    pz = PauliZ{FermionTag}()
+
     hopping1 = SummedOperator([
         TensoredOperator(
             [id1, id2],
-            [MajoranaX(), MajoranaY()],
+            [px, py],
             t * im / 2,
         )
         for (id1, id2) in neighbor_pairs_with_same_labels(space)
@@ -147,7 +167,7 @@ function HubbardHamiltonian(
     hopping2 = SummedOperator([
         TensoredOperator(
             [id1, id2],
-            [MajoranaY(), MajoranaX()],
+            [py, px],
             -t * im / 2,
         )
         for (id1, id2) in neighbor_pairs_with_same_labels(space)
@@ -156,13 +176,13 @@ function HubbardHamiltonian(
     interaction1 = SummedOperator([
         TensoredOperator(
             indices_with_fixed_site(space, site),
-            [MajoranaZ(), MajoranaZ()],
+            [pz, pz],
             u / 4,
         )
         for site in 1:nsites(space)
     ])
     interaction2 = SummedOperator([
-        TensoredOperator(id, MajoranaZ(), -u / 4)
+        TensoredOperator(id, pz, -u / 4)
         for labels in local_labels(space)
         for id in indices_with_fixed_labels(space, labels)
     ])
