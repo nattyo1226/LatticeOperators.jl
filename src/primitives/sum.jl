@@ -10,6 +10,10 @@ function Base.hash(pr::SummedOperatorPrimitive, h::UInt)
     return hash(Set(pr.prs), h)
 end
 
+function Base.adjoint(pr::SummedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
+    return SummedOperatorPrimitive(adjoint.(pr.prs))
+end
+
 function Base.show(io::IO, pr::SummedOperatorPrimitive)
     @printf io "SummedOperatorPrimitive([%s])" join(string.(pr.prs), ", ")
 end

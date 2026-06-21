@@ -4,10 +4,11 @@ using Printf
 
 include("primitives/Primitives.jl")
 using .Primitives
-export AbstractOperatorPrimitive, majorana_grade
+export AbstractOperatorPrimitive, fermion_parity
 export IndexedOperatorPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
+export Creation, Annihilation, Occupation
 export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("operators/Operators.jl")

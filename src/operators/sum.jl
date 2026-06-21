@@ -63,7 +63,7 @@ function Base.:(-)(op::SummedOperator)
 end
 
 function Base.adjoint(op::SummedOperator)
-    ops_adj = [adjoint(op) for op in op.ops]
+    ops_adj = adjoint.(op.ops)
     return SummedOperator(ops_adj)
 end
 

@@ -13,7 +13,7 @@ function test_hubbard()
     @test model' == model
 
     ops = model.ops
-    @test length(ops) == 10
+    @test length(ops) == 6
 end
 
 @testset "HubbardHamiltonian" begin

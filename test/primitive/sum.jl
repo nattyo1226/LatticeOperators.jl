@@ -1,7 +1,6 @@
 function test_summed_operator_primitive()
-    T = SpinHalfTag
-    pr1 = PauliX{T}()
-    pr2 = PauliY{T}()
+    pr1 = PauliX()
+    pr2 = PauliY()
     pr = SummedOperatorPrimitive([pr1, pr2])
 
     @test length(pr.prs) == 2

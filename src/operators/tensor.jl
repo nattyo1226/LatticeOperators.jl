@@ -3,7 +3,7 @@ function normalize(prs::AbstractVector{<:IndexedOperatorPrimitive{T,I}}, coeff::
     for i in eachindex(prs)
         for j in (i+1):length(prs)
             if prs[i].id > prs[j].id
-                inv_grade += majorana_grade(prs[i].pr) * majorana_grade(prs[j].pr)
+                inv_grade += fermion_parity(prs[i].pr) * fermion_parity(prs[j].pr)
             end
         end
     end
@@ -82,7 +82,7 @@ function Base.:(-)(op::TensoredOperator)
 end
 
 function Base.adjoint(op::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    prs_adj = reverse(op.prs)
+    prs_adj = adjoint.(reverse(op.prs))
     coeff_adj = conj(op.coeff)
     return TensoredOperator(prs_adj, coeff_adj)
 end

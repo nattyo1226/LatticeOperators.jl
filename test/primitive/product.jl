@@ -1,7 +1,6 @@
 function test_producted_operator_primitive()
-    T = SpinHalfTag
-    pr1 = PauliX{T}()
-    pr2 = PauliY{T}()
+    pr1 = PauliX()
+    pr2 = PauliY()
     pr = ProductedOperatorPrimitive([pr1, pr2])
 
     @test length(pr.prs) == 2

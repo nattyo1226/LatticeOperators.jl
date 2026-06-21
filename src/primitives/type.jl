@@ -8,7 +8,7 @@ function Base.isless(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPri
     return order_key(pr1) < order_key(pr2)
 end
 
-function majorana_grade(::AbstractOperatorPrimitive)
+function fermion_parity(::AbstractOperatorPrimitive)
     return 0
 end
 
@@ -26,6 +26,10 @@ end
 
 function Base.hash(op::IndexedOperatorPrimitive, h::UInt)
     return hash((op.id, op.pr), h)
+end
+
+function Base.adjoint(op::IndexedOperatorPrimitive)
+    return IndexedOperatorPrimitive(op.id, adjoint(op.pr))
 end
 
 function Base.show(io::IO, op::IndexedOperatorPrimitive)

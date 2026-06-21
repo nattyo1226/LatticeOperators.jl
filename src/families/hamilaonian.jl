@@ -5,8 +5,8 @@ function TFIHamiltonian(
     j::Float64,
     h::Float64,
 )
-    px = PauliX{SpinHalfTag}()
-    pz = PauliZ{SpinHalfTag}()
+    px = PauliX()
+    pz = PauliZ()
     return SummedOperator(
         UniformOneSiteOperator(space, px, h),
         UniformTwoSiteOperator(space, pz, pz, j),
@@ -22,8 +22,8 @@ function TFIHamiltonian(
         error("upper_coeff must be positive.")
     end
 
-    px = PauliX{SpinHalfTag}()
-    pz = PauliZ{SpinHalfTag}()
+    px = PauliX()
+    pz = PauliZ()
 
     one_site_ops = [
         begin
@@ -49,9 +49,9 @@ function XYZHamiltonian(
     jy::Float64,
     jz::Float64,
 )
-    px = PauliX{SpinHalfTag}()
-    py = PauliY{SpinHalfTag}()
-    pz = PauliZ{SpinHalfTag}()
+    px = PauliX()
+    py = PauliY()
+    pz = PauliZ()
 
     return SummedOperator(
         UniformTwoSiteOperator(space, px, px, jx),
@@ -69,9 +69,9 @@ function XYZHamiltonian(
         error("upper_coeff must be positive.")
     end
 
-    px = PauliX{SpinHalfTag}()
-    py = PauliY{SpinHalfTag}()
-    pz = PauliZ{SpinHalfTag}()
+    px = PauliX()
+    py = PauliY()
+    pz = PauliZ()
 
     pairs = neighbor_pairs(space)
 
@@ -109,8 +109,8 @@ function ClusterHamiltonian(
         throw(ArgumentError("ClusterHamiltonian requires a hypercubic lattice."))
     end
 
-    px = PauliX{SpinHalfTag}()
-    pz = PauliZ{SpinHalfTag}()
+    px = PauliX()
+    pz = PauliZ()
 
     num_sites = nsites(space.geometry)
     if num_sites != length(coeffs)
@@ -152,44 +152,31 @@ function HubbardHamiltonian(
     t::Float64,
     u::Float64,
 )
-    px = PauliX{FermionTag}()
-    py = PauliY{FermionTag}()
-    pz = PauliZ{FermionTag}()
+    creation = Creation()
+    annihilation = Annihilation()
+    occupation = Occupation()
 
-    hopping1 = SummedOperator([
+    hopping = SummedOperator([
         TensoredOperator(
             [id1, id2],
-            [px, py],
-            t * im / 2,
-        )
-        for (id1, id2) in neighbor_pairs_with_same_labels(space)
-    ])
-    hopping2 = SummedOperator([
-        TensoredOperator(
-            [id1, id2],
-            [py, px],
-            -t * im / 2,
+            [creation, annihilation],
+            t,
         )
         for (id1, id2) in neighbor_pairs_with_same_labels(space)
     ])
 
-    interaction1 = SummedOperator([
+    interaction = SummedOperator([
         TensoredOperator(
             indices_with_fixed_site(space, site),
-            [pz, pz],
-            u / 4,
+            [occupation, occupation],
+            u,
         )
         for site in 1:nsites(space)
     ])
-    interaction2 = SummedOperator([
-        TensoredOperator(id, pz, -u / 4)
-        for labels in local_labels(space)
-        for id in indices_with_fixed_labels(space, labels)
-    ])
+
     return SummedOperator(
-        hopping1,
-        hopping2,
-        interaction1,
-        interaction2,
+        hopping,
+        hopping',
+        interaction,
     )
 end

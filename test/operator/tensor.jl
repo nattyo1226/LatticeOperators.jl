@@ -1,9 +1,9 @@
 function test_tensored_operator_1()
-    T = SpinHalfTag
-    px = PauliX{T}()
-    py = PauliY{T}()
-    pr1 = IndexedOperatorPrimitive(SiteIndex{T}(1), px)
-    pr2 = IndexedOperatorPrimitive(SiteIndex{T}(2), py)
+    px = PauliX()
+    py = PauliY()
+
+    pr1 = IndexedOperatorPrimitive(SiteIndex{SpinHalfTag}(1), px)
+    pr2 = IndexedOperatorPrimitive(SiteIndex{SpinHalfTag}(2), py)
     op = TensoredOperator([pr1, pr2,], 0.5)
 
     @test op.coeff == 0.5
@@ -15,12 +15,13 @@ function test_tensored_operator_1()
 end
 
 function test_tensored_operator_2()
-    T = FermionTag
-    px = PauliX{T}()
-    py = PauliY{T}()
-    pr1 = IndexedOperatorPrimitive(SiteSpinIndex(1, Up), px)
-    pr2 = IndexedOperatorPrimitive(SiteSpinIndex(2, Down), py)
-    pr3 = IndexedOperatorPrimitive(SiteSpinIndex(3, Down), py)
+    creation = Creation()
+    annihilation = Annihilation()
+    occupation = Occupation()
+
+    pr1 = IndexedOperatorPrimitive(SiteSpinIndex(1, Up), creation)
+    pr2 = IndexedOperatorPrimitive(SiteSpinIndex(2, Down), annihilation)
+    pr3 = IndexedOperatorPrimitive(SiteSpinIndex(3, Down), occupation)
     coeff = 1.0 + 0.5im
     op = TensoredOperator([pr1, pr2, pr3], coeff)
 
@@ -30,7 +31,7 @@ function test_tensored_operator_2()
     @test op.prs[2] == pr2
     @test op.prs[3] == pr3
 
-    @test op' == TensoredOperator([pr1, pr2, pr3], -conj(coeff))
+    @test op' == TensoredOperator([pr1', pr2', pr3'], -(coeff)')
 end
 
 @testset "TensoredOperator" begin

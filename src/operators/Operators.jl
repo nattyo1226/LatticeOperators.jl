@@ -3,7 +3,7 @@ module Operators
 using LatticeSpaces
 using Printf
 
-using ..Primitives: AbstractOperatorPrimitive, majorana_grade, IndexedOperatorPrimitive, SummedOperatorPrimitive, ProductedOperatorPrimitive
+using ..Primitives: AbstractOperatorPrimitive, fermion_parity, IndexedOperatorPrimitive, SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("type.jl")
 export AbstractOperator

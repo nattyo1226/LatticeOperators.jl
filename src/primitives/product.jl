@@ -10,6 +10,10 @@ function Base.hash(pr::ProductedOperatorPrimitive{T}, h::UInt) where {T<:Abstrac
     return hash(pr.prs, h)
 end
 
+function Base.adjoint(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
+    return ProductedOperatorPrimitive(adjoint.(reverse(pr.prs)))
+end
+
 function Base.show(io::IO, pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
     @printf io "ProductedOperatorPrimitive{%s}([%s])" Val{T} join(string.(reverse(pr.prs)), ", ")
 end
