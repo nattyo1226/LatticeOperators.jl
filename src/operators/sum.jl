@@ -12,18 +12,29 @@ function SummedOperator(op::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I
 end
 
 function SummedOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    ops_merged = TensoredOperator{T,I}[]
+    ops_flat = TensoredOperator{T,I}[]
     for op in ops
         if op isa TensoredOperator{T,I}
-            push!(ops_merged, op)
+            push!(ops_flat, op)
         elseif op isa SummedOperator{T,I}
-            append!(ops_merged, op.ops)
+            append!(ops_flat, op.ops)
         else
             throw(ArgumentError("Unsupported operator type: $(typeof(op))"))
         end
     end
-    ops_sorted = sort(ops_merged)
-    return SummedOperator(ops_sorted)
+
+    ops_dict = Dict{Vector{<:IndexedOperatorPrimitive{T,I}},Number}()
+    for op in ops_flat
+        if haskey(ops_dict, op.prs)
+            ops_dict[op.prs] += op.coeff
+        else
+            ops_dict[op.prs] = op.coeff
+        end
+    end
+
+    ops_merged = [TensoredOperator(prs, coeff) for (prs, coeff) in ops_dict if !iszero(coeff)]
+
+    return SummedOperator(sort(ops_merged))
 end
 
 function SummedOperator(op::AbstractOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
