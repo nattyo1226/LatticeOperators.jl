@@ -69,7 +69,7 @@ function Base.isless(op1::TensoredOperator{T,I}, op2::TensoredOperator{T,I}) whe
     prs2 = ntuple(i -> op2.prs[i].pr, length(op2.prs))
     ids1 = ntuple(i -> op1.prs[i].id, length(op1.prs))
     ids2 = ntuple(i -> op2.prs[i].id, length(op2.prs))
-    return prs1 < prs2 || (prs1 == prs2 && ids1 < ids2)
+    return length(ids1) < length(ids2) || (length(ids1) == length(ids2) && ids1 < ids2) || (length(ids1) == length(ids2) && ids1 == ids2 && prs1 < prs2)
 end
 
 function Base.:(*)(c::Number, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
