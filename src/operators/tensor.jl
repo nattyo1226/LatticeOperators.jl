@@ -95,14 +95,14 @@ function Base.show(io::IO, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator)
+function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator{T}) where {T<:AbstractSystemTag}
     @printf io "[TensoredOperator]\n"
 
     for pr in op.prs
         @printf io "%s\n" string(pr)
     end
 
-    if coeff_type(typeof(op.coeff)) <: Complex
+    if coeff_type(T) <: Complex
         @printf io "Coefficient: %g + %gim" real(op.coeff) imag(op.coeff)
     else
         @printf io "Coefficient: %g" op.coeff
