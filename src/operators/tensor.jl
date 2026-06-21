@@ -102,7 +102,9 @@ function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator)
         @printf io "%s\n" string(pr)
     end
 
-    if !isapprox(op.coeff, 1.0)
+    if coeff_type(typeof(op.coeff)) <: Complex
+        @printf io "Coefficient: %g + %gim" real(op.coeff) imag(op.coeff)
+    else
         @printf io "Coefficient: %g" op.coeff
     end
 end
