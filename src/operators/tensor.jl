@@ -89,7 +89,12 @@ end
 
 function Base.show(io::IO, op::TensoredOperator{T}) where {T<:AbstractSystemTag}
     if coeff_type(T) <: Complex
-        @printf io "TensoredOperator([%s], %g + %gim)" join(string.(op.prs), ", ") real(op.coeff) imag(op.coeff)
+        real_coeff = real(op.coeff)
+        imag_coeff = imag(op.coeff)
+        imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
+        coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
+
+        @printf io "TensoredOperator([%s], %s)" join(string.(op.prs), ", ") coeff_str
     else
         @printf io "TensoredOperator([%s], %g)" join(string.(op.prs), ", ") op.coeff
     end
