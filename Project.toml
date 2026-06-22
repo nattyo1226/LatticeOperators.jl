@@ -8,6 +8,9 @@ LatticeSpaces = "a9deb695-1ab1-4287-81b1-7b7be27b3be4"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
+[sources]
+LatticeSpaces = {url = "https://github.com/nattyo1226/LatticeSpaces.jl", rev = "main"}
+
 [compat]
 LatticeSpaces = "1.0.0"
 Printf = "1.11.0"
