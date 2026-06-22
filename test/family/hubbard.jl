@@ -3,10 +3,7 @@ function test_hubbard()
     u = 2.0
     space = Space(
         SpinfulFermionSpace(),
-        Hypercubic(
-            (2,),
-            OpenBoundary(1),
-        ),
+        Hypercubic(2, OpenBoundary),
     )
 
     model = HubbardHamiltonian(space, t, u)

@@ -4,10 +4,7 @@ function test_xyz()
     jz = +1.0
     space = Space(
         SpinHalfSpace(),
-        Hypercubic(
-            (2, 2),
-            OpenBoundary(2),
-        ),
+        Hypercubic((2, 2), OpenBoundary),
     )
 
     model = XYZHamiltonian(space, jx, jy, jz)

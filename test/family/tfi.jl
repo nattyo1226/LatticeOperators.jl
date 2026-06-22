@@ -3,10 +3,7 @@ function test_tfi()
     h = -2.0
     space = Space(
         SpinHalfSpace(),
-        Hypercubic(
-            (2, 2),
-            OpenBoundary(2),
-        ),
+        Hypercubic((2, 2), OpenBoundary),
     )
 
     model = TFIHamiltonian(space, j, h)
