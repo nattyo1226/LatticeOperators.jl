@@ -32,7 +32,7 @@ function SummedOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemT
         end
     end
 
-    ops_merged = [TensoredOperator(prs, coeff) for (prs, coeff) in ops_dict if !iszero(coeff)]
+    ops_merged = [TensoredOperator(prs, coeff) for (prs, coeff) in ops_dict]
 
     return SummedOperator(sort(ops_merged))
 end
