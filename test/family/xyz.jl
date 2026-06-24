@@ -5,6 +5,7 @@ function test_xyz()
     space = Space(
         SpinHalfSpace(),
         Hypercubic((2, 2), OpenBoundary),
+        FullSector{SpinHalfTag}(),
     )
 
     model = XYZHamiltonian(space, jx, jy, jz)

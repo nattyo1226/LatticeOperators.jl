@@ -4,6 +4,7 @@ function test_hubbard()
     space = Space(
         SpinfulFermionSpace(),
         Hypercubic(2, OpenBoundary),
+        FullSector{FermionTag}(),
     )
 
     model = HubbardHamiltonian(space, t, u)
