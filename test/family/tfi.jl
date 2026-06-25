@@ -4,7 +4,6 @@ function test_tfi()
     space = Space(
         SpinHalfSpace(),
         Hypercubic((2, 2), OpenBoundary),
-        FullSector{SpinHalfTag}(),
     )
 
     model = TFIHamiltonian(space, j, h)

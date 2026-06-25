@@ -2,7 +2,6 @@ function test_cluster()
     space = Space(
         SpinHalfSpace(),
         Hypercubic((2, 2), OpenBoundary),
-        FullSector{SpinHalfTag}(),
     )
 
     model = ClusterHamiltonian(space)
