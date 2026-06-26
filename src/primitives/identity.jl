@@ -1,3 +1,6 @@
+"""
+Identity operator primitive.
+"""
 struct Identity{T<:AbstractSystemTag} <: AbstractOperatorPrimitive{T} end
 order_key(::Identity) = (0,)
 Base.adjoint(::Identity{T}) where {T<:AbstractSystemTag} = Identity{T}()

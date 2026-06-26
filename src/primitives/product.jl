@@ -1,3 +1,26 @@
+"""
+ProductedOperatorPrimitive{T<:AbstractSystemTag} is a concrete type that represents a product of operator primitives.
+It is parameterized by a type T that must be a subtype of AbstractSystemTag.
+The struct contains a vector of operator primitives and a coefficient, allowing for the representation of complex operator products in lattice systems.
+
+You can create a ProductedOperatorPrimitive by constructors or `*` operator.
+Examples:
+```julia
+pr1 = PauliX()
+pr2 = PauliY()
+
+product1 = ProductedOperatorPrimitive(pr1)  # Single operator primitive
+product2 = ProductedOperatorPrimitive(pr1, pr2)  # Multiple operator primitives
+product3 = ProductedOperatorPrimitive(product1, 2.0)  # Another ProductedOperatorPrimitive with a coefficient
+
+product4 = pr1 * pr2  # Using the `*` operator with two operator primitives
+@assert product4 == product2
+pruduct5 = 2.0 * pr1  # Using the `*` operator with a coefficient
+@assert product5 == product3
+```
+
+ProductedOperatorPrimitive has tier 1 in the ordering of operator primitives.
+"""
 struct ProductedOperatorPrimitive{T<:AbstractSystemTag} <: AbstractOperatorPrimitive{T}
     prs::Vector{<:AbstractOperatorPrimitive{T}}
     coeff::Number
@@ -49,13 +72,11 @@ function Base.hash(pr::ProductedOperatorPrimitive{T}, h::UInt) where {T<:Abstrac
 end
 
 function Base.:(*)(c::Number, pr::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    if pr isa ProductedOperatorPrimitive{T}
-        coeff = coeff_type(T)(c) * pr.coeff
-        return ProductedOperatorPrimitive(pr.prs, coeff)
-    else
-        coeff = coeff_type(T)(c)
-        return ProductedOperatorPrimitive([pr], coeff)
-    end
+    return ProductedOperatorPrimitive(pr, c)
+end
+
+function Base.:(*)(pr::AbstractOperatorPrimitive{T}, c::Number) where {T<:AbstractSystemTag}
+    return ProductedOperatorPrimitive(pr, c)
 end
 
 function Base.:(*)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
@@ -63,7 +84,7 @@ function Base.:(*)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimi
 end
 
 function Base.:(-)(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return (-1.0) * pr
+    return ProductedOperatorPrimitive(pr, -1.0)
 end
 
 function Base.adjoint(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}

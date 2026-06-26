@@ -1,3 +1,23 @@
+"""
+SummedOperatorPrimitive{T<:AbstractSystemTag} is a concrete type that represents a sum of operator primitives in a lattice system.
+It is parameterized by a type T that must be a subtype of AbstractSystemTag.
+The struct contains a vector of operator primitives, allowing for the representation of complex operator sums in lattice systems.
+
+You can create a SummedOperatorPrimitive by constructors or `+` operator.
+Examples:
+```julia
+pr1 = PauliX()
+pr2 = PauliY()
+
+sum1 = SummedOperatorPrimitive(pr1)  # Single operator primitive
+sum2 = SummedOperatorPrimitive(pr1, pr2)  # Multiple operator primitives
+
+sum3 = pr1 + pr2  # Using the `+` operator with two operator primitives
+@assert sum3 == sum2
+```
+
+SummedOperatorPrimitive has tier 2 in the ordering of operator primitives.
+"""
 struct SummedOperatorPrimitive{T<:AbstractSystemTag} <: AbstractOperatorPrimitive{T}
     prs::Vector{<:AbstractOperatorPrimitive{T}}
 
@@ -64,8 +84,13 @@ function Base.:(*)(c::Number, pr::SummedOperatorPrimitive{T}) where {T<:Abstract
     return SummedOperatorPrimitive(prs_scaled)
 end
 
+function Base.:(*)(pr::SummedOperatorPrimitive{T}, c::Number) where {T<:AbstractSystemTag}
+    prs_scaled = [pr * c for pr in pr.prs]
+    return SummedOperatorPrimitive(prs_scaled)
+end
+
 function Base.:(-)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return pr1 + (-1.0) * pr2
+    return pr1 + (-pr2)
 end
 
 function Base.:(-)(pr::SummedOperatorPrimitive{T}) where {T<:AbstractSystemTag}

@@ -1,5 +1,13 @@
+"""
+Abstract base type for all operator primitives.
+"""
 abstract type AbstractOperatorPrimitive{T<:AbstractSystemTag} end
 
+"""
+order_key(pr::AbstractOperatorPrimitive) -> Tuple
+Returns a tuple that defines the ordering of operator primitives.
+This is used for sorting and comparison of operator primitives.
+"""
 function order_key(pr::AbstractOperatorPrimitive)
     throw(ArgumentError("order_key is not defined for $(typeof(pr))"))
 end
@@ -8,10 +16,17 @@ function Base.isless(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPri
     return order_key(pr1) < order_key(pr2)
 end
 
+"""
+fermion_parity(pr::AbstractOperatorPrimitive) -> Int
+Returns the fermion parity of the operator primitive.
+"""
 function fermion_parity(::AbstractOperatorPrimitive)
     return 0
 end
 
+"""
+Indexed operator primitive.
+"""
 struct IndexedOperatorPrimitive{T<:AbstractSystemTag,I<:AbstractIndex{T},P<:AbstractOperatorPrimitive{T}}
     id::I
     pr::P
