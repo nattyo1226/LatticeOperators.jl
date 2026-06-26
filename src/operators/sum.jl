@@ -7,12 +7,12 @@ struct SummedOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOpera
     end
 end
 
-function SummedOperator(op::TensoredOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+function SummedOperator(op::TensoredOperator)
     return SummedOperator([op])
 end
 
 function SummedOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    ops_flat = TensoredOperator{T,I}[]
+    ops_flat = Vector{TensoredOperator{T,I}}()
     for op in ops
         if op isa TensoredOperator{T,I}
             push!(ops_flat, op)

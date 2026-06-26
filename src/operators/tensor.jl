@@ -108,7 +108,12 @@ function Base.show(io::IO, ::MIME"text/plain", op::TensoredOperator{T}) where {T
     end
 
     if coeff_type(T) <: Complex
-        @printf io "Coefficient: %g + %gim" real(op.coeff) imag(op.coeff)
+        real_coeff = real(op.coeff)
+        imag_coeff = imag(op.coeff)
+        imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
+        coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
+
+        @printf io "Coefficient: %s" coeff_str
     else
         @printf io "Coefficient: %g" op.coeff
     end
