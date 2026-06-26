@@ -10,6 +10,6 @@ include("operator.jl")
 export OneSiteOperator, UniformOneSiteOperator, TwoSiteOperator, UniformTwoSiteOperator, ThreeSiteOperator
 
 include("hamilaonian.jl")
-export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian, HubbardHamiltonian
+export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian, HubbardHamiltonian, SymmetricHubbardHamiltonian
 
 end

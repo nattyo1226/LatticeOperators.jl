@@ -1,5 +1,3 @@
-# Note: All coefficients are trearted with positive sign in each model.
-
 function TFIHamiltonian(
     space::Space{SpinHalfTag},
     j::Float64,
@@ -169,6 +167,40 @@ function HubbardHamiltonian(
         TensoredOperator(
             indices_with_fixed_site(space, site),
             [occupation, occupation],
+            u,
+        )
+        for site in 1:nsites(space)
+    ])
+
+    return SummedOperator(
+        hopping,
+        hopping',
+        interaction,
+    )
+end
+
+function SymmetricHubbardHamiltonian(
+    space::Space{FermionTag},
+    t::Float64,
+    u::Float64,
+)
+    creation = Creation()
+    annihilation = Annihilation()
+    occupation_hole = Occupation() - 0.5 * Identity{FermionTag}()
+
+    hopping = SummedOperator([
+        TensoredOperator(
+            [id1, id2],
+            [creation, annihilation],
+            t,
+        )
+        for (id1, id2) in neighbor_pairs_with_same_labels(space)
+    ])
+
+    interaction = SummedOperator([
+        TensoredOperator(
+            indices_with_fixed_site(space, site),
+            [occupation_hole, occupation_hole],
             u,
         )
         for site in 1:nsites(space)
