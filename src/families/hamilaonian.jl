@@ -150,15 +150,23 @@ function HubbardHamiltonian(
     t::Float64,
     u::Float64,
 )
-    creation = Creation()
-    annihilation = Annihilation()
-    occupation = Occupation()
+    mx = MajoranaX()
+    my = MajoranaY()
+    oc = 0.5 * (Identity{FermionTag}() - MajoranaZ())
 
-    hopping = SummedOperator([
+    hopping1 = SummedOperator([
         TensoredOperator(
             [id1, id2],
-            [creation, annihilation],
-            t,
+            [mx, my],
+            0.5 * im * t,
+        )
+        for (id1, id2) in neighbor_pairs_with_same_labels(space)
+    ])
+    hopping2 = SummedOperator([
+        TensoredOperator(
+            [id1, id2],
+            [my, mx],
+            -0.5 * im * t,
         )
         for (id1, id2) in neighbor_pairs_with_same_labels(space)
     ])
@@ -166,15 +174,15 @@ function HubbardHamiltonian(
     interaction = SummedOperator([
         TensoredOperator(
             indices_with_fixed_site(space, site),
-            [occupation, occupation],
+            [oc, oc],
             u,
         )
         for site in 1:nsites(space)
     ])
 
     return SummedOperator(
-        hopping,
-        hopping',
+        hopping1,
+        hopping2,
         interaction,
     )
 end
@@ -184,15 +192,23 @@ function SymmetricHubbardHamiltonian(
     t::Float64,
     u::Float64,
 )
-    creation = Creation()
-    annihilation = Annihilation()
-    occupation_hole = Occupation() - 0.5 * Identity{FermionTag}()
+    mx = MajoranaX()
+    my = MajoranaY()
+    mz = MajoranaZ()
 
-    hopping = SummedOperator([
+    hopping1 = SummedOperator([
         TensoredOperator(
             [id1, id2],
-            [creation, annihilation],
-            t,
+            [mx, my],
+            0.5 * im * t,
+        )
+        for (id1, id2) in neighbor_pairs_with_same_labels(space)
+    ])
+    hopping2 = SummedOperator([
+        TensoredOperator(
+            [id1, id2],
+            [my, mx],
+            -0.5 * im * t,
         )
         for (id1, id2) in neighbor_pairs_with_same_labels(space)
     ])
@@ -200,15 +216,15 @@ function SymmetricHubbardHamiltonian(
     interaction = SummedOperator([
         TensoredOperator(
             indices_with_fixed_site(space, site),
-            [occupation_hole, occupation_hole],
+            [mz, mz],
             u,
         )
         for site in 1:nsites(space)
     ])
 
     return SummedOperator(
-        hopping,
-        hopping',
+        hopping1,
+        hopping2,
         interaction,
     )
 end

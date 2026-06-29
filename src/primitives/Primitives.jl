@@ -19,7 +19,7 @@ include("pauli.jl")
 export PauliX, PauliY, PauliZ
 
 include("fermion.jl")
-export Creation, Annihilation, Occupation
+export Creation, Annihilation, Occupation, MajoranaX, MajoranaY, MajoranaZ
 
 include("sum.jl")
 export SummedOperatorPrimitive

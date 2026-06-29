@@ -8,7 +8,7 @@ export AbstractOperatorPrimitive, fermion_parity
 export IndexedOperatorPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
-export Creation, Annihilation, Occupation
+export Creation, Annihilation, Occupation, MajoranaX, MajoranaY, MajoranaZ
 export SummedOperatorPrimitive, ProductedOperatorPrimitive
 
 include("operators/Operators.jl")
