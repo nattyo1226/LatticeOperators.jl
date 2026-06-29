@@ -217,7 +217,7 @@ function SymmetricHubbardHamiltonian(
         TensoredOperator(
             indices_with_fixed_site(space, site),
             [mz, mz],
-            u,
+            0.25 * u,
         )
         for site in 1:nsites(space)
     ])
