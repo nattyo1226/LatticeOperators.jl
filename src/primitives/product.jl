@@ -38,14 +38,13 @@ function ProductedOperatorPrimitive(pr::AbstractOperatorPrimitive, coeff::Number
     return ProductedOperatorPrimitive([pr], coeff)
 end
 
-function ProductedOperatorPrimitive(pr::ProductedOperatorPrimitive{T}, coeff::Number=1.0) where {T<:AbstractSystemTag}
-    coeff = coeff_type(T)(coeff)
+function ProductedOperatorPrimitive(pr::ProductedOperatorPrimitive, coeff::Number=1.0)
     return ProductedOperatorPrimitive(pr.prs, coeff * pr.coeff)
 end
 
 function ProductedOperatorPrimitive(prs::AbstractOperatorPrimitive{T}...) where {T<:AbstractSystemTag}
     prs_flat = Vector{AbstractOperatorPrimitive{T}}()
-    coeff = one(coeff_type(T))
+    coeff = 1.0
 
     for pr in prs
         if pr isa ProductedOperatorPrimitive{T}
@@ -59,7 +58,7 @@ function ProductedOperatorPrimitive(prs::AbstractOperatorPrimitive{T}...) where 
     return ProductedOperatorPrimitive(prs_flat, coeff)
 end
 
-function order_key(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
+function order_key(pr::ProductedOperatorPrimitive)
     return (1, length(pr.prs), Tuple(Iterators.flatten(order_key.(pr.prs))))
 end
 
@@ -67,8 +66,8 @@ function Base.:(==)(pr1::ProductedOperatorPrimitive{T}, pr2::ProductedOperatorPr
     return pr1.prs == pr2.prs && pr1.coeff == pr2.coeff
 end
 
-function Base.hash(pr::ProductedOperatorPrimitive{T}, h::UInt) where {T<:AbstractSystemTag}
-    return hash(pr.prs, h)
+function Base.hash(pr::ProductedOperatorPrimitive, h::UInt)
+    return hash((pr.prs, pr.coeff), h)
 end
 
 function Base.:(*)(c::Number, pr::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
@@ -83,7 +82,7 @@ function Base.:(*)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimi
     return ProductedOperatorPrimitive(pr1, pr2)
 end
 
-function Base.:(-)(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
+function Base.:(-)(pr::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
     return ProductedOperatorPrimitive(pr, -1.0)
 end
 
@@ -94,33 +93,38 @@ function Base.adjoint(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSyste
 end
 
 function Base.show(io::IO, pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    if coeff_type(T) <: Complex
-        real_coeff = real(pr.coeff)
-        imag_coeff = imag(pr.coeff)
-        imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
-        coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
+    if !isone(pr.coeff)
+        if typeof(pr.coeff) <: Complex && !isreal(pr.coeff)
+            real_coeff = real(pr.coeff)
+            imag_coeff = imag(pr.coeff)
+            imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
+            coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
 
-        @printf io "(%s) %s" coeff_str join(string.(pr.prs), " ")
-    else
-        @printf io "(%g) %s" pr.coeff join(string.(pr.prs), " ")
+            @printf io "(%s) " coeff_str
+        else
+            @printf io "(%g) " real(pr.coeff)
+        end
     end
+
+    @printf io "%s" join(string.(pr.prs), " ")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
     @printf io "[ProductedOperatorPrimitive]\n"
 
-    for pr in pr.prs
-        @printf io "%s\n" string(pr)
-    end
+    @printf io "Operator Primitives: %s\n" join(string.(pr.prs), " ")
 
-    if coeff_type(T) <: Complex
-        real_coeff = real(pr.coeff)
-        imag_coeff = imag(pr.coeff)
-        imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
-        coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
+    @printf io "Coefficient: "
+    if !isone(pr.coeff)
+        if typeof(pr.coeff) <: Complex && !isreal(pr.coeff)
+            real_coeff = real(pr.coeff)
+            imag_coeff = imag(pr.coeff)
+            imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
+            coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
 
-        @printf io "Coefficient: %s\n" coeff_str
-    else
-        @printf io "Coefficient: %g\n" pr.coeff
+            @printf io "%s" coeff_str
+        else
+            @printf io "%g" real(pr.coeff)
+        end
     end
 end

@@ -34,22 +34,22 @@ function SummedOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemT
 
     ops_merged = [TensoredOperator(prs, coeff) for (prs, coeff) in ops_dict]
 
-    return SummedOperator(sort(ops_merged))
+    return SummedOperator(ops_merged)
 end
 
-function SummedOperator(op::AbstractOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return SummedOperator{T,I}([op])
+function SummedOperator(op::AbstractOperator)
+    return SummedOperator([op])
 end
 
 function Base.:(==)(
     op1::SummedOperator{T,I},
     op2::SummedOperator{T,I},
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return length(op1.ops) == length(op2.ops) && all(op1.ops .== op2.ops)
+    return op1.ops == op2.ops
 end
 
 function Base.hash(op::SummedOperator, h::UInt)
-    return hash(Set(op.ops), h)
+    return hash(op.ops, h)
 end
 
 function Base.:(*)(c::Number, op::SummedOperator{T}) where {T<:AbstractSystemTag}

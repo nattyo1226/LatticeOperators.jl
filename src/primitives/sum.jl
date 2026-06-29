@@ -43,22 +43,28 @@ function SummedOperatorPrimitive(prs::AbstractOperatorPrimitive{T}...) where {T<
         end
     end
 
-    prs_dict = Dict{AbstractOperatorPrimitive{T},Number}()
+    prs_dict = Dict{Vector{AbstractOperatorPrimitive{T}},Number}()
     for pr in prs_flat
-        coeff = if pr isa ProductedOperatorPrimitive{T}
+        key = if pr isa ProductedOperatorPrimitive{T}
+            pr.prs
+        else
+            [pr]
+        end
+
+        val = if pr isa ProductedOperatorPrimitive{T}
             pr.coeff
         else
             one(coeff_type(T))
         end
 
-        if haskey(prs_dict, pr)
-            prs_dict[pr] += coeff
+        if haskey(prs_dict, key)
+            prs_dict[key] += val
         else
-            prs_dict[pr] = coeff
+            prs_dict[key] = val
         end
     end
 
-    prs_merged = [ProductedOperatorPrimitive(pr, coeff) for (pr, coeff) in prs_dict]
+    prs_merged = [ProductedOperatorPrimitive(prs, coeff) for (prs, coeff) in prs_dict]
 
     return SummedOperatorPrimitive(sort(prs_merged))
 end
@@ -68,11 +74,11 @@ function order_key(pr::SummedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
 end
 
 function Base.:(==)(pr1::SummedOperatorPrimitive{T}, pr2::SummedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return Set(pr1.prs) == Set(pr2.prs)
+    return pr1.prs == pr2.prs
 end
 
 function Base.hash(pr::SummedOperatorPrimitive, h::UInt)
-    return hash(Set(pr.prs), h)
+    return hash(pr.prs, h)
 end
 
 function Base.:(+)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
