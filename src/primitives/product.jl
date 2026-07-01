@@ -1,130 +1,53 @@
-"""
-ProductedOperatorPrimitive{T<:AbstractSystemTag} is a concrete type that represents a product of operator primitives.
-It is parameterized by a type T that must be a subtype of AbstractSystemTag.
-The struct contains a vector of operator primitives and a coefficient, allowing for the representation of complex operator products in lattice systems.
-
-You can create a ProductedOperatorPrimitive by constructors or `*` operator.
-Examples:
-```julia
-pr1 = PauliX()
-pr2 = PauliY()
-
-product1 = ProductedOperatorPrimitive(pr1)  # Single operator primitive
-product2 = ProductedOperatorPrimitive(pr1, pr2)  # Multiple operator primitives
-product3 = ProductedOperatorPrimitive(product1, 2.0)  # Another ProductedOperatorPrimitive with a coefficient
-
-product4 = pr1 * pr2  # Using the `*` operator with two operator primitives
-@assert product4 == product2
-pruduct5 = 2.0 * pr1  # Using the `*` operator with a coefficient
-@assert product5 == product3
-```
-
-ProductedOperatorPrimitive has tier 1 in the ordering of operator primitives.
-"""
-struct ProductedOperatorPrimitive{T<:AbstractSystemTag} <: AbstractOperatorPrimitive{T}
-    prs::Vector{<:AbstractOperatorPrimitive{T}}
-    coeff::Number
-
-    function ProductedOperatorPrimitive(
-        prs::AbstractVector{<:AbstractOperatorPrimitive{T}},
-        coeff::Number=1.0,
-    ) where {T<:AbstractSystemTag}
-        coeff = coeff_type(T)(coeff)
-        return new{T}(prs, coeff)
-    end
+struct ProductPrimitive{T<:AbstractSystemTag} <: AbstractPrimitive{T}
+    eps::Vector{ElementaryPrimitive{T}}
+    coeff::ComplexF64
 end
 
-function ProductedOperatorPrimitive(pr::AbstractOperatorPrimitive, coeff::Number=1.0)
-    return ProductedOperatorPrimitive([pr], coeff)
-end
+function ProductPrimitive(
+    aps::AbstractVector{<:AbstractPrimitive{T}},
+    coeff::Number=one(ComplexF64),
+) where {T<:AbstractSystemTag}
+    eps = Vector{ElementaryPrimitive{T}}()
+    coeff = ComplexF64(coeff)
 
-function ProductedOperatorPrimitive(pr::ProductedOperatorPrimitive, coeff::Number=1.0)
-    return ProductedOperatorPrimitive(pr.prs, coeff * pr.coeff)
-end
-
-function ProductedOperatorPrimitive(prs::AbstractOperatorPrimitive{T}...) where {T<:AbstractSystemTag}
-    prs_flat = Vector{AbstractOperatorPrimitive{T}}()
-    coeff = 1.0
-
-    for pr in prs
-        if pr isa ProductedOperatorPrimitive{T}
-            append!(prs_flat, pr.prs)
-            coeff *= pr.coeff
+    for ap in aps
+        if ap isa ElementaryPrimitive{T}
+            push!(eps, ap)
+        elseif ap isa ProductPrimitive{T}
+            append!(eps, ap.eps)
+            coeff *= ap.coeff
         else
-            push!(prs_flat, pr)
+            throw(ArgumentError("Cannot create ProductPrimitive from $(typeof(ap))"))
         end
     end
 
-    return ProductedOperatorPrimitive(prs_flat, coeff)
+    return ProductPrimitive{T}(eps, coeff)
 end
 
-function order_key(pr::ProductedOperatorPrimitive)
-    return (1, length(pr.prs), Tuple(Iterators.flatten(order_key.(pr.prs))))
+function ProductPrimitive(
+    ao::ElementaryPrimitive{T},
+    coeff::Number=one(ComplexF64),
+) where {T<:AbstractSystemTag}
+    return ProductPrimitive([ao], coeff)
 end
 
-function Base.:(==)(pr1::ProductedOperatorPrimitive{T}, pr2::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return pr1.prs == pr2.prs && pr1.coeff == pr2.coeff
+function ProductPrimitive(aps::AbstractPrimitive{T}...) where {T<:AbstractSystemTag}
+    return ProductPrimitive(collect(aps))
 end
 
-function Base.hash(pr::ProductedOperatorPrimitive, h::UInt)
-    return hash((pr.prs, pr.coeff), h)
+function Base.:(==)(pp1::ProductPrimitive{T}, pp2::ProductPrimitive{T}) where {T<:AbstractSystemTag}
+    return pp1.eps == pp2.eps && pp1.coeff == pp2.coeff
 end
 
-function Base.:(*)(c::Number, pr::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return ProductedOperatorPrimitive(pr, c)
+function Base.hash(pp::ProductPrimitive, h::UInt)
+    return hash((pp.eps, pp.coeff), h)
 end
 
-function Base.:(*)(pr::AbstractOperatorPrimitive{T}, c::Number) where {T<:AbstractSystemTag}
-    return ProductedOperatorPrimitive(pr, c)
-end
-
-function Base.:(*)(pr1::AbstractOperatorPrimitive{T}, pr2::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return ProductedOperatorPrimitive(pr1, pr2)
-end
-
-function Base.:(-)(pr::AbstractOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    return ProductedOperatorPrimitive(pr, -1.0)
-end
-
-function Base.adjoint(pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    prs_adj = adjoint.(reverse(pr.prs))
-    coeff_adj = conj(pr.coeff)
-    return ProductedOperatorPrimitive(prs_adj, coeff_adj)
-end
-
-function Base.show(io::IO, pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    if !isone(pr.coeff)
-        if typeof(pr.coeff) <: Complex && !isreal(pr.coeff)
-            real_coeff = real(pr.coeff)
-            imag_coeff = imag(pr.coeff)
-            imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
-            coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
-
-            @printf io "(%s) " coeff_str
-        else
-            @printf io "(%g) " real(pr.coeff)
-        end
+function Base.adjoint(pp::ProductPrimitive{T}) where {T<:AbstractSystemTag}
+    eps_adj = Vector{AbstractPrimitive{T}}()
+    for ep in reverse(pp.eps)
+        push!(eps_adj, adjoint(ep))
     end
-
-    @printf io "%s" join(string.(pr.prs), " ")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", pr::ProductedOperatorPrimitive{T}) where {T<:AbstractSystemTag}
-    @printf io "[ProductedOperatorPrimitive]\n"
-
-    @printf io "Operator Primitives: %s\n" join(string.(pr.prs), " ")
-
-    @printf io "Coefficient: "
-    if !isone(pr.coeff)
-        if typeof(pr.coeff) <: Complex && !isreal(pr.coeff)
-            real_coeff = real(pr.coeff)
-            imag_coeff = imag(pr.coeff)
-            imag_coeff_sign = imag_coeff >= 0 ? "+" : "-"
-            coeff_str = @sprintf "%g %s %gim" real_coeff imag_coeff_sign abs(imag_coeff)
-
-            @printf io "%s" coeff_str
-        else
-            @printf io "%g" real(pr.coeff)
-        end
-    end
+    coeff_adj = conj(pp.coeff)
+    return ProductPrimitive(eps_adj, coeff_adj)
 end

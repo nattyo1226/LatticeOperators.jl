@@ -9,8 +9,8 @@ using LatticeSpaces
 using Printf
 
 include("type.jl")
-export AbstractOperatorPrimitive, fermion_parity
-export IndexedOperatorPrimitive
+export AbstractPrimitive, isone_product, fermion_parity
+export ElementaryPrimitive
 
 include("identity.jl")
 export Identity
@@ -18,13 +18,15 @@ export Identity
 include("pauli.jl")
 export PauliX, PauliY, PauliZ
 
-include("fermion.jl")
-export Creation, Annihilation, Occupation, MajoranaX, MajoranaY, MajoranaZ
-
-include("sum.jl")
-export SummedOperatorPrimitive
+include("majorana.jl")
+export MajoranaX, MajoranaY
 
 include("product.jl")
-export ProductedOperatorPrimitive
+export ProductPrimitive
+
+include("sum.jl")
+export SumPrimitive
+
+include("operations.jl")
 
 end

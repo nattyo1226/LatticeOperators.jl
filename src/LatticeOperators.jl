@@ -4,21 +4,22 @@ using Printf
 
 include("primitives/Primitives.jl")
 using .Primitives
-export AbstractOperatorPrimitive, fermion_parity
-export IndexedOperatorPrimitive
+export AbstractPrimitive, isone_product, fermion_parity
+export ElementaryPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
-export Creation, Annihilation, Occupation, MajoranaX, MajoranaY, MajoranaZ
-export SummedOperatorPrimitive, ProductedOperatorPrimitive
+export MajoranaX, MajoranaY
+export ProductPrimitive, SumPrimitive
 
 include("operators/Operators.jl")
 using .Operators
 export AbstractOperator
-export TensoredOperator, SummedOperator
+export LocalOperator, ProductOperator, SumOperator
+export local_operator
 
 include("families/Families.jl")
 using .Families
-export UniformOneSiteOperator, UniformTwoSiteOperator, OneSiteOperator, TwoSiteOperator, ThreeSiteOperator
-export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian, HubbardHamiltonian, SymmetricHubbardHamiltonian
+export uniform_onsite, uniform_bond
+export tfi, xyz, cluster, hubbard, symmetric_hubbard
 
 end

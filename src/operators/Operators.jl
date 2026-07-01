@@ -3,16 +3,21 @@ module Operators
 using LatticeSpaces
 using Printf
 
-using ..Primitives: AbstractOperatorPrimitive, fermion_parity, IndexedOperatorPrimitive, SummedOperatorPrimitive, ProductedOperatorPrimitive
+using ..Primitives: AbstractPrimitive, isone_product, fermion_parity, ProductPrimitive, SumPrimitive
 
 include("type.jl")
 export AbstractOperator
 
-include("tensor.jl")
-export TensoredOperator
+include("local.jl")
+export LocalOperator
+export local_operator
+
+include("product.jl")
+export ProductOperator
 
 include("sum.jl")
-export SummedOperator
+export SumOperator
 
+include("operations.jl")
 
 end

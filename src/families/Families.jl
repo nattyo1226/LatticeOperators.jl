@@ -3,13 +3,13 @@ module Families
 using Random
 using LatticeSpaces
 
-using ..Primitives: AbstractOperatorPrimitive, Identity, PauliX, PauliY, PauliZ, MajoranaX, MajoranaY, MajoranaZ
-using ..Operators: TensoredOperator, SummedOperator
+using ..Primitives: AbstractPrimitive, Identity, PauliX, PauliY, PauliZ, MajoranaX, MajoranaY
+using ..Operators: AbstractOperator, ProductOperator, SumOperator, local_operator
 
 include("operator.jl")
-export OneSiteOperator, UniformOneSiteOperator, TwoSiteOperator, UniformTwoSiteOperator, ThreeSiteOperator
+export uniform_onsite, uniform_bond
 
-include("hamilaonian.jl")
-export TFIHamiltonian, XYZHamiltonian, ClusterHamiltonian, HubbardHamiltonian, SymmetricHubbardHamiltonian
+include("hamiltonian.jl")
+export tfi, xyz, cluster, hubbard, symmetric_hubbard
 
 end

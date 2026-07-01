@@ -1,80 +1,115 @@
-struct SummedOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOperator{T,I}
-    ops::Vector{TensoredOperator{T,I}}
+function normalize_pos(
+    pos::AbstractVector{ProductOperator{T,I}},
+) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    pos_dict = Dict{Tuple{Vararg{LocalOperator{T,I}}},ComplexF64}()
+    for po in pos
+        key = Tuple(po.los)
+        pos_dict[key] = get(pos_dict, key, 0.0 + 0.0im) + po.coeff
+    end
 
-    function SummedOperator(ops::Vector{TensoredOperator{T,I}}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-        ops = sort(ops)
-        return new{T,I}(ops)
+    pos_merged = [
+        begin
+            prs = collect(LocalOperator{T,I}, key)
+            ProductOperator(prs, value)
+        end
+        for (key, value) in pos_dict
+        if !iszero(value)
+    ]
+
+    return sort(pos_merged)
+end
+
+struct SumOperator{T<:AbstractSystemTag,I<:AbstractIndex{T}} <: AbstractOperator{T,I}
+    pos::Vector{ProductOperator{T,I}}
+
+    function SumOperator{T,I}(
+        pos::AbstractVector{ProductOperator{T,I}},
+    ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+        pos_n = normalize_pos(pos)
+        return new{T,I}(pos_n)
     end
 end
 
-function SummedOperator(op::TensoredOperator)
-    return SummedOperator([op])
+function SumOperator(pos::AbstractVector{ProductOperator{T,I}}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    return SumOperator{T,I}(pos)
 end
 
-function SummedOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    ops_flat = Vector{TensoredOperator{T,I}}()
+function SumOperator(po::ProductOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    return SumOperator([po])
+end
+
+function SumOperator(ops::AbstractOperator{T,I}...) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    pos = Vector{ProductOperator{T,I}}()
     for op in ops
-        if op isa TensoredOperator{T,I}
-            push!(ops_flat, op)
-        elseif op isa SummedOperator{T,I}
-            append!(ops_flat, op.ops)
+        if op isa LocalOperator{T,I}
+            push!(pos, ProductOperator(op))
+        elseif op isa ProductOperator{T,I}
+            push!(pos, op)
+        elseif op isa SumOperator{T,I}
+            append!(pos, op.pos)
         else
             throw(ArgumentError("Unsupported operator type: $(typeof(op))"))
         end
     end
 
-    ops_dict = Dict{Vector{<:IndexedOperatorPrimitive{T,I}},Number}()
-    for op in ops_flat
-        if haskey(ops_dict, op.prs)
-            ops_dict[op.prs] += op.coeff
-        else
-            ops_dict[op.prs] = op.coeff
-        end
-    end
-
-    ops_merged = [TensoredOperator(prs, coeff) for (prs, coeff) in ops_dict]
-
-    return SummedOperator(ops_merged)
+    return SumOperator(pos)
 end
 
-function SummedOperator(op::AbstractOperator)
-    return SummedOperator([op])
+function local_operator(
+    id::I,
+    sp::SumPrimitive{T},
+) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    pos = Vector{ProductOperator{T,I}}()
+    for pp in sp.pps
+        po = ProductOperator(id, pp)
+        push!(pos, po)
+    end
+
+    return SumOperator(pos)
 end
 
 function Base.:(==)(
-    op1::SummedOperator{T,I},
-    op2::SummedOperator{T,I},
+    so1::SumOperator{T,I},
+    so2::SumOperator{T,I},
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return op1.ops == op2.ops
+    return so1.pos == so2.pos
 end
 
-function Base.hash(op::SummedOperator, h::UInt)
-    return hash(op.ops, h)
+function Base.hash(so::SumOperator, h::UInt)
+    return hash(so.pos, h)
 end
 
-function Base.:(*)(c::Number, op::SummedOperator{T}) where {T<:AbstractSystemTag}
-    ops_scaled = [c * op for op in op.ops]
-    return SummedOperator(ops_scaled)
+function Base.isless(so1::SumOperator{T,I}, so2::SumOperator{T,I}) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
+    return length(so1.pos) < length(so2.pos) || (length(so1.pos) == length(so2.pos) && so1.pos < so2.pos)
 end
 
-function Base.:(-)(op::SummedOperator)
-    ops_neg = [-op for op in op.ops]
-    return SummedOperator(ops_neg)
+function Base.adjoint(so::SumOperator)
+    pos_adj = adjoint.(so.pos)
+    return SumOperator(pos_adj)
 end
 
-function Base.adjoint(op::SummedOperator)
-    ops_adj = adjoint.(op.ops)
-    return SummedOperator(ops_adj)
+function Base.show(io::IO, op::SumOperator)
+    if isempty(op.pos)
+        @printf io "0"
+    else
+        for (i, po) in enumerate(op.pos)
+            if i > 1
+                @printf io " + "
+            end
+            @printf io "%s" string(po)
+        end
+    end
 end
 
-function Base.show(io::IO, op::SummedOperator)
-    @printf io "SummedOperator([%s])" join(string.(op.ops), ", ")
-end
+function Base.show(io::IO, ::MIME"text/plain", op::SumOperator)
+    @printf io "[SumOperator]"
 
-function Base.show(io::IO, ::MIME"text/plain", op::SummedOperator)
-    @printf io "[SummedOperator]\n"
-
-    for op in op.ops
-        @printf io "%s\n" string(op)
+    if isempty(op.pos)
+        @printf io "\n0"
+    else
+        @printf io "\nTerms:"
+        for po in op.pos
+            @printf io "\n  %s" string(po)
+        end
     end
 end

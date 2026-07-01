@@ -1,49 +1,31 @@
-function OneSiteOperator(
-    id::I,
-    pr::P,
-    coeff::Number=1.0,
-) where {T<:AbstractSystemTag,I<:AbstractIndex{T},P<:AbstractOperatorPrimitive{T}}
-    return TensoredOperator(id, pr, coeff)
-end
-
-function UniformOneSiteOperator(
+function uniform_onsite(
     space::Space{T},
     pr::P,
     coeff::Number=1.0,
-) where {T<:AbstractSystemTag,P<:AbstractOperatorPrimitive{T}}
-    ops = [OneSiteOperator(id, pr, coeff) for id in indices(space)]
-    return SummedOperator(ops)
+) where {T<:AbstractSystemTag,P<:AbstractPrimitive{T}}
+    I = index_type(space)
+    aos = Vector{AbstractOperator{T,I}}()
+    for id in indices(space)
+        ao = local_operator(id, pr) * coeff
+        push!(aos, ao)
+    end
+
+    return SumOperator(aos...)
 end
 
-function TwoSiteOperator(
-    id1::I,
-    id2::I,
-    pr1::AbstractOperatorPrimitive{T},
-    pr2::AbstractOperatorPrimitive{T}=pr1,
-    coeff::Number=1.0,
-) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return TensoredOperator([id1, id2], [pr1, pr2], coeff)
-end
-
-function UniformTwoSiteOperator(
-    space::Space,
-    pr1::AbstractOperatorPrimitive{T},
-    pr2::AbstractOperatorPrimitive{T}=pr1,
+function uniform_bond(
+    space::Space{T},
+    pr1::P1,
+    pr2::P2=pr1,
     coeff::Number=1.0,
     shell::Int=1,
-) where {T<:AbstractSystemTag}
-    ops = [TwoSiteOperator(i, j, pr1, pr2, coeff) for (i, j) in neighbor_pairs(space, shell)]
-    return SummedOperator(ops)
-end
+) where {T<:AbstractSystemTag,P1<:AbstractPrimitive{T},P2<:AbstractPrimitive{T}}
+    I = index_type(space)
+    aos = Vector{AbstractOperator{T,I}}()
+    for (id1, id2) in neighbor_pairs(space, shell)
+        ao = local_operator(id1, pr1) * local_operator(id2, pr2) * coeff
+        push!(aos, ao)
+    end
 
-function ThreeSiteOperator(
-    id1::I,
-    id2::I,
-    id3::I,
-    pr1::AbstractOperatorPrimitive{T},
-    pr2::AbstractOperatorPrimitive{T}=pr1,
-    pr3::AbstractOperatorPrimitive{T}=pr1,
-    coeff::Number=1.0,
-) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    return TensoredOperator([id1, id2, id3], [pr1, pr2, pr3], coeff)
+    return SumOperator(aos...)
 end

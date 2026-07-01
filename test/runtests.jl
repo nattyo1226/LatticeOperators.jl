@@ -2,14 +2,13 @@ using LatticeOperators
 using Test
 
 using LatticeSpaces
+using Random
 
-include("primitive/sum.jl")
-include("primitive/product.jl")
+include("primitives/product.jl")
+include("primitives/sum.jl")
 
-include("operator/tensor.jl")
-include("operator/sum.jl")
+include("operators/product.jl")
+include("operators/sum.jl")
 
-include("family/tfi.jl")
-include("family/xyz.jl")
-include("family/cluster.jl")
-include("family/hubbard.jl")
+include("families/operator.jl")
+include("families/hamiltonian.jl")
