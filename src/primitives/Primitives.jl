@@ -9,7 +9,7 @@ using LatticeSpaces
 using Printf
 
 include("type.jl")
-export AbstractPrimitive, isone_product, anticommutes
+export AbstractPrimitive, isone_product, anticommutes, majorana_degree
 export ElementaryPrimitive
 
 include("identity.jl")

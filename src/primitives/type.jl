@@ -39,11 +39,12 @@ function anticommutes(
 end
 
 """
-isodd_fermion(pr::AbstractPrimitive{T}) where {T<:AbstractSystemTag} -> Bool
-Returns true if the operator primitive represents an odd fermion operator.
+majorana_degree(pr::AbstractPrimitive{T}) where {T<:AbstractSystemTag} -> Int
+Returns the Majorana degree of the operator primitive.
+The Majorana degree is defined as the number of Majorana operators in the primitive.
 """
-function isodd_fermion(::AbstractPrimitive{T}) where {T<:AbstractSystemTag}
-    return false
+function majorana_degree(::AbstractPrimitive{T}) where {T<:AbstractSystemTag}
+    return 0
 end
 
 abstract type ElementaryPrimitive{T<:AbstractSystemTag} <: AbstractPrimitive{T} end

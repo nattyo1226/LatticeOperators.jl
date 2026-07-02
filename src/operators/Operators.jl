@@ -3,7 +3,7 @@ module Operators
 using LatticeSpaces
 using Printf
 
-using ..Primitives: AbstractPrimitive, MajoranaZ, ProductPrimitive, SumPrimitive, isodd_fermion
+using ..Primitives: AbstractPrimitive, MajoranaZ, ProductPrimitive, SumPrimitive, majorana_degree
 import ..Primitives: isone_product, anticommutes
 
 include("type.jl")
