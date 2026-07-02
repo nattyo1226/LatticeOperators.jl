@@ -8,7 +8,7 @@ export AbstractPrimitive, isone_product, anticommutes
 export ElementaryPrimitive
 export Identity
 export PauliX, PauliY, PauliZ
-export MajoranaX, MajoranaY
+export MajoranaX, MajoranaY, MajoranaZ
 export ProductPrimitive, SumPrimitive
 
 include("operators/Operators.jl")

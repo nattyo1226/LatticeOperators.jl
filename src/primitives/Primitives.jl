@@ -19,7 +19,7 @@ include("pauli.jl")
 export PauliX, PauliY, PauliZ
 
 include("majorana.jl")
-export MajoranaX, MajoranaY
+export MajoranaX, MajoranaY, MajoranaZ
 
 include("product.jl")
 export ProductPrimitive

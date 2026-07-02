@@ -51,7 +51,11 @@ function anticommutes(
     op2::LocalOperator{T,I,P2},
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T},P1<:AbstractPrimitive{T},P2<:AbstractPrimitive{T}}
     if T == FermionTag
-        return anticommutes(op1.pr, op2.pr)
+        if op1.id == op2.id
+            return anticommutes(op1.pr, op2.pr)
+        else
+            return !(P1 == MajoranaZ || P2 == MajoranaZ)
+        end
     else
         return op1.id == op2.id && anticommutes(op1.pr, op2.pr)
     end
