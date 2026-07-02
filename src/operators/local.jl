@@ -38,3 +38,21 @@ function Base.show(io::IO, ::MIME"text/plain", op::LocalOperator{T,I,P}) where {
     @printf io "id: %s\n" op.id
     @printf io "primitive: %s\n" op.pr
 end
+
+function isone_product(
+    op1::LocalOperator{T,I,P1},
+    op2::LocalOperator{T,I,P2},
+) where {T<:AbstractSystemTag,I<:AbstractIndex{T},P1<:AbstractPrimitive{T},P2<:AbstractPrimitive{T}}
+    return op1.id == op2.id && isone_product(op1.pr, op2.pr)
+end
+
+function anticommutes(
+    op1::LocalOperator{T,I,P1},
+    op2::LocalOperator{T,I,P2},
+) where {T<:AbstractSystemTag,I<:AbstractIndex{T},P1<:AbstractPrimitive{T},P2<:AbstractPrimitive{T}}
+    if T == FermionTag
+        return anticommutes(op1.pr, op2.pr)
+    else
+        return op1.id == op2.id && anticommutes(op1.pr, op2.pr)
+    end
+end

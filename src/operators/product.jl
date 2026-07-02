@@ -2,22 +2,22 @@ function normalize_los(
     los::AbstractVector{<:LocalOperator{T,I}},
     coeff::Number,
 ) where {T<:AbstractSystemTag,I<:AbstractIndex{T}}
-    inv_grade = 0
+    coeff_n = ComplexF64(coeff)
     for i in eachindex(los)
         for j in (i+1):length(los)
             if los[i] > los[j]
-                inv_grade += fermion_parity(los[i].pr) * fermion_parity(los[j].pr)
+                if anticommutes(los[i], los[j])
+                    coeff_n *= -1
+                end
             end
         end
     end
-    sign = isodd(inv_grade) ? -1 : 1
-    coeff_n = ComplexF64(sign * coeff)
 
     los_sorted = sort(los)
     los_reduced = Vector{LocalOperator{T,I}}()
     i = firstindex(los_sorted)
     while i <= lastindex(los_sorted)
-        if i < lastindex(los_sorted) && los_sorted[i].id == los_sorted[i+1].id && isone_product(los_sorted[i].pr, los_sorted[i+1].pr)
+        if i < lastindex(los_sorted) && isone_product(los_sorted[i], los_sorted[i+1])
             i += 2
         else
             push!(los_reduced, los_sorted[i])

@@ -3,7 +3,8 @@ module Operators
 using LatticeSpaces
 using Printf
 
-using ..Primitives: AbstractPrimitive, isone_product, fermion_parity, ProductPrimitive, SumPrimitive
+using ..Primitives: AbstractPrimitive, ProductPrimitive, SumPrimitive
+import ..Primitives: isone_product, anticommutes
 
 include("type.jl")
 export AbstractOperator
