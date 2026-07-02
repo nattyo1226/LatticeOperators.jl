@@ -55,10 +55,10 @@ end
 function test_cluster_1()
     space = Space(SpinHalfSpace(), Hypercubic(4, OpenBoundary))
 
-    coeffs = fill(1.0, length(indices(space)))
+    coeffs = fill(1.0, nindices(space))
     expected = [
         begin
-            ns = neighbors(space, id)
+            ns = collect(neighbors(space, id))
             ProductOperator(
                 [id; ns],
                 [PauliZ(); fill(PauliX(), length(ns))],
@@ -74,10 +74,10 @@ end
 function test_cluster_2()
     space = Space(SpinHalfSpace(), Hypercubic(4, OpenBoundary))
 
-    coeffs = collect(1.0:length(indices(space)))
+    coeffs = collect(1.0:nindices(space))
     expected = [
         begin
-            ns = neighbors(space, id)
+            ns = collect(neighbors(space, id))
             ProductOperator(
                 [id; ns],
                 [PauliZ(); fill(PauliX(), length(ns))],

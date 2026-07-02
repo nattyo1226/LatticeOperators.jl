@@ -92,7 +92,7 @@ end
 
 function cluster(
     space::Space{SpinHalfTag},
-    coeffs::AbstractVector{Float64}=fill(1.0, length(indices(space))),
+    coeffs::AbstractVector{Float64}=fill(1.0, nindices(space)),
 )
     if !(space.geometry isa Hypercubic)
         println("Space geometry: ", typeof(space.geometry))
@@ -109,11 +109,10 @@ function cluster(
 
     ops = [
         begin
-            ns = neighbors(space, id)
-            num_neighbors = length(ns)
+            ns = collect(neighbors(space, id))
             ProductOperator(
                 [id; ns],
-                [pz; fill(px, num_neighbors)],
+                [pz; fill(px, length(ns))],
                 -coeffs[i],
             )
         end
@@ -132,7 +131,7 @@ function cluster(
         throw(ArgumentError("upper_coeff must be positive."))
     end
 
-    num_sites = length(indices(space))
+    num_sites = nindices(space)
     coeffs = (2.0 .* rand(rng, num_sites) .- 1.0) .* upper_coeff
 
     return cluster(space, coeffs)
