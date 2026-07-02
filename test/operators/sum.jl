@@ -145,7 +145,7 @@ function test_so_10()
     @test SumOperator(pxi) < SumOperator(pxi, pxj)
 end
 
-@testset "SummedOperator" begin
+@testset "SumOperator" begin
     test_so_1()
     test_so_2()
     test_so_3()
