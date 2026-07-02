@@ -144,7 +144,7 @@ function hubbard(
 )
     mx = MajoranaX()
     my = MajoranaY()
-    mz = -im * mx * my
+    mz = MajoranaZ()
     oc = 0.5 * (1.0 - mz)
 
     hopping = [
@@ -183,7 +183,7 @@ function symmetric_hubbard(
 )
     mx = MajoranaX()
     my = MajoranaY()
-    mz = -im * mx * my
+    mz = MajoranaZ()
 
     hopping = [
         begin

@@ -20,18 +20,29 @@ end
 isone_product(pr::AbstractPrimitive{T}, pr::AbstractPrimitive{T}) where {T<:AbstractSystemTag} -> Bool
 Returns true if the multiplication of the operator primitive with itself yields the identity operator.
 """
-function isone_product(::AbstractPrimitive{T}, ::AbstractPrimitive{T}) where {T<:AbstractSystemTag}
+function isone_product(
+    ::AbstractPrimitive{T},
+    ::AbstractPrimitive{T},
+) where {T<:AbstractSystemTag}
     return false
 end
 
 """
-fermion_parity(pr::AbstractPrimitive) -> Int
-Returns the fermion parity of the operator primitive.
+anticommutes(pr1::AbstractPrimitive{T}, pr2::AbstractPrimitive{T}) where {T<:AbstractSystemTag} -> Bool
+Returns true if the two operator primitives anticommute with each other.
 """
 function anticommutes(
     ::AbstractPrimitive{T},
     ::AbstractPrimitive{T},
 ) where {T<:AbstractSystemTag}
+    return false
+end
+
+"""
+isodd_fermion(pr::AbstractPrimitive{T}) where {T<:AbstractSystemTag} -> Bool
+Returns true if the operator primitive represents an odd fermion operator.
+"""
+function isodd_fermion(::AbstractPrimitive{T}) where {T<:AbstractSystemTag}
     return false
 end
 

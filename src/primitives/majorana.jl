@@ -3,6 +3,7 @@ Majorana X operator primitive.
 """
 struct MajoranaX <: ElementaryPrimitive{FermionTag} end
 _order_key(::MajoranaX) = (0,)
+isodd_fermion(::MajoranaX) = true
 Base.adjoint(::MajoranaX) = MajoranaX()
 Base.show(io::IO, ::MajoranaX) = print(io, "γ₁")
 
@@ -11,6 +12,7 @@ Majorana Y operator primitive.
 """
 struct MajoranaY <: ElementaryPrimitive{FermionTag} end
 _order_key(::MajoranaY) = (1,)
+isodd_fermion(::MajoranaY) = true
 Base.adjoint(::MajoranaY) = MajoranaY()
 Base.show(io::IO, ::MajoranaY) = print(io, "γ₂")
 

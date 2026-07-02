@@ -54,7 +54,7 @@ function anticommutes(
         if op1.id == op2.id
             return anticommutes(op1.pr, op2.pr)
         else
-            return !(P1 == MajoranaZ || P2 == MajoranaZ)
+            return isodd_fermion(op1.pr) && isodd_fermion(op2.pr)
         end
     else
         return op1.id == op2.id && anticommutes(op1.pr, op2.pr)

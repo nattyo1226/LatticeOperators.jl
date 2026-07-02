@@ -3,7 +3,7 @@ module Families
 using Random
 using LatticeSpaces
 
-using ..Primitives: AbstractPrimitive, Identity, PauliX, PauliY, PauliZ, MajoranaX, MajoranaY
+using ..Primitives: AbstractPrimitive, Identity, PauliX, PauliY, PauliZ, MajoranaX, MajoranaY, MajoranaZ
 using ..Operators: AbstractOperator, ProductOperator, SumOperator, local_operator
 
 include("operator.jl")
