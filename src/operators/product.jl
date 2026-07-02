@@ -147,6 +147,8 @@ function Base.show(io::IO, po::ProductOperator{T}) where {T<:AbstractSystemTag}
     if !isone(po.coeff)
         if isreal(po.coeff)
             @printf io "(%g) " real(po.coeff)
+        elseif iszero(real(po.coeff))
+            @printf io "(%gim) " imag(po.coeff)
         else
             real_coeff = real(po.coeff)
             imag_coeff = imag(po.coeff)
@@ -179,6 +181,8 @@ function Base.show(io::IO, ::MIME"text/plain", po::ProductOperator{T}) where {T<
     @printf io "\nCoefficient        : "
     if isreal(po.coeff)
         @printf io "%g" real(po.coeff)
+    elseif iszero(real(po.coeff))
+        @printf io "%gim" imag(po.coeff)
     else
         real_coeff = real(po.coeff)
         imag_coeff = imag(po.coeff)
