@@ -9,6 +9,7 @@ using ..Operators: AbstractOperator, LocalOperator, ProductOperator, SumOperator
 
 include("util.jl")
 export default_eps, hermitian_phase, local_basis_operators
+export nearest_neighbor_basis_operators
 
 include("operator.jl")
 export uniform_onsite, uniform_bond
