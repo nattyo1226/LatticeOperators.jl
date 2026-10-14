@@ -84,10 +84,7 @@ end
         space = Space(SpinHalfSpace(), Hypercubic(4, OpenBoundary))
         ops = nearest_neighbor_basis_operators(space)
         eps = (PauliX(), PauliY(), PauliZ())
-        expected = [
-            ProductOperator(SiteIndex(SpinHalfTag, s), pr)
-            for s in 1:4 for pr in eps
-        ]
+        expected = ProductOperator{SpinHalfTag,index_type(space)}[]
         for (s1, s2) in ((1, 2), (2, 3), (3, 4))
             for pr2 in eps, pr1 in eps
                 push!(expected,
@@ -96,7 +93,8 @@ end
             end
         end
 
-        @test length(ops) == 39
+        @test length(ops) == 27
+        @test all(op -> length(op.los) == 2, ops)
         @test ops == expected
         @test ops isa Vector{ProductOperator{SpinHalfTag,index_type(space)}}
         @test all(op -> adjoint(op) == op, ops)
@@ -107,23 +105,23 @@ end
         ops = nearest_neighbor_basis_operators(space)
         seam = local_operator(SiteIndex(SpinHalfTag, 1), PauliX()) *
                local_operator(SiteIndex(SpinHalfTag, 4), PauliZ())
-        @test length(ops) == 48
+        @test length(ops) == 36
         @test seam in ops
         @test length(unique(ops)) == length(ops)
 
         space2 = Space(SpinHalfSpace(), Hypercubic(2, PeriodicBoundary))
         ops2 = nearest_neighbor_basis_operators(space2)
         ids2 = collect(indices(space2))
-        @test length(ops2) == 15
-        @test length(unique(ops2)) == 15
-        @test ops2 == vcat(local_basis_operators(ids2, 1), local_basis_operators(ids2, 2))
+        @test length(ops2) == 9
+        @test length(unique(ops2)) == 9
+        @test ops2 == local_basis_operators(ids2, 2)
     end
 
     @testset "spinful fermions" begin
         space = Space(SpinfulFermionSpace(), Hypercubic(3, OpenBoundary))
         ops = nearest_neighbor_basis_operators(space)
         eps = (MajoranaX(), MajoranaY(), MajoranaZ())
-        expected = local_basis_operators(collect(indices(space)), 1)
+        expected = ProductOperator{FermionTag,index_type(space)}[]
         for (s1, s2) in ((1, 2), (2, 3))
             for spin1 in (Up, Down), spin2 in (Up, Down)
                 for pr2 in eps, pr1 in eps
@@ -135,12 +133,12 @@ end
             end
         end
 
-        @test length(ops) == 90
-        @test count(op -> length(op.los) == 1, ops) == 18
+        @test length(ops) == 72
+        @test all(op -> length(op.los) == 2, ops)
         @test ops == expected
         @test ops isa Vector{ProductOperator{FermionTag,index_type(space)}}
         @test all(op -> adjoint(op) == op, ops)
-        @test all(op -> length(op.los) == 1 || site(op.los[1].id) != site(op.los[2].id), ops)
+        @test all(op -> site(op.los[1].id) != site(op.los[2].id), ops)
     end
 
     @testset "one site and custom primitives" begin
@@ -148,8 +146,8 @@ end
             for boundary in (OpenBoundary, PeriodicBoundary)
                 space = Space(local_space, Hypercubic(1, boundary))
                 ops = nearest_neighbor_basis_operators(space)
-                @test ops == local_basis_operators(collect(indices(space)), 1)
-                @test all(op -> length(op.los) == 1, ops)
+                @test isempty(ops)
+                @test typeof(ops) == typeof(local_basis_operators(collect(indices(space)), 1))
             end
         end
 
@@ -157,11 +155,11 @@ end
         eps = (PauliX(), PauliZ())
         ops = nearest_neighbor_basis_operators(space; eps)
         ids = collect(indices(space))
-        expected = local_basis_operators(ids, 1; eps)
+        expected = ProductOperator{SpinHalfTag,index_type(space)}[]
         for s in 1:3
             append!(expected, local_basis_operators(ids[s:s+1], 2; eps))
         end
-        @test length(ops) == 20
+        @test length(ops) == 12
         @test ops == expected
         empty_ops = nearest_neighbor_basis_operators(space; eps=())
         @test isempty(empty_ops)
@@ -171,12 +169,11 @@ end
     @testset "other geometries" begin
         space = Space(SpinHalfSpace(), AllToAll(4))
         ids = collect(indices(space))
-        @test nearest_neighbor_basis_operators(space) ==
-              vcat(local_basis_operators(ids, 1), local_basis_operators(ids, 2))
+        @test nearest_neighbor_basis_operators(space) == local_basis_operators(ids, 2)
 
         space2d = Space(SpinHalfSpace(), Hypercubic((2, 2), OpenBoundary))
         ops2d = nearest_neighbor_basis_operators(space2d)
-        @test length(ops2d) == 48
-        @test length(unique(ops2d)) == 48
+        @test length(ops2d) == 36
+        @test length(unique(ops2d)) == 36
     end
 end
